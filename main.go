@@ -12,7 +12,7 @@ import (
 // @termsOfService
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT
-// @securityDefinitions.apikey ApiKeyAuth (start with Bearer)
+// @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
 // @host localhost:5000

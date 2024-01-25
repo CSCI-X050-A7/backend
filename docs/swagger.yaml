@@ -600,7 +600,7 @@ paths:
       tags:
       - User
 securityDefinitions:
-  ApiKeyAuth (start with Bearer):
+  ApiKeyAuth:
     in: header
     name: Authorization
     type: apiKey
