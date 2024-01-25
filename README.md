@@ -13,6 +13,7 @@ For any fiber go application, just clone the repo & rename the application name.
 - [JWT](https://github.com/golang-jwt/jwt)
 - [Swagger docs](https://github.com/swaggo/swag)
 - [Air](https://github.com/cosmtrek/air)
+- [Swag](https://github.com/swaggo/swag)
 
 ## ⚡️ Quick start
 - Install **`docker`**, **`air`**, & **`swag`**
