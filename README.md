@@ -67,28 +67,24 @@ like setting up the database, logger instance.
 
 ## ⚙️ Configuration
 
-```ini
+```bash
 # .env
 # APP settings:
 HOST="0.0.0.0"
 PORT=5000
-DEBUG=false
+DEBUG=true
 
 # JWT settings:
-JWT_SECRET_KEY="super_secret_here"
-JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT=120
+JWT_SECRET="super_secret_here"
+JWT_EXPIRE_SECONDS=1209600
 
 # Database settings:
 DB_HOST=fibergb-postgres
 DB_PORT=5432
-DB_USER=dev
+DB_USERNAME=dev
 DB_PASSWORD=dev
 DB_NAME=fiber_go_api
-DB_SSL_MODE=disable
-DB_DEBUG=true
-DB_MAX_OPEN_CONNECTIONS=3
-DB_MAX_IDLE_CONNECTIONS=1
-DB_MAX_LIFETIME_CONNECTIONS=10
+DB_ECHO=true
 ```
 
 ## 🔨 Docker development
