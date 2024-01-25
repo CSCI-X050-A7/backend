@@ -39,3 +39,5 @@ type UpdateUser struct {
 	FirstName string `json:"first_name" validate:"required,lte=100"`
 	LastName  string `json:"last_name" validate:"required,lte=100"`
 }
+
+type UserListResponse = ListResponse[User]

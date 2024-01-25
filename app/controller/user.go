@@ -18,7 +18,7 @@ import (
 // @Produce json
 // @Param offset query integer false "offset"
 // @Param limit query integer false "limit"
-// @Success 200 {array} schema.User
+// @Success 200 {array} schema.UserListResponse
 // @Failure 400,401,403 {object} schema.ErrorResponse "Error"
 // @Security ApiKeyAuth
 // @Router /api/v1/users [get]

@@ -39,3 +39,5 @@ type UpdateBook struct {
 	Status int    `json:"status" validate:"required,len=1"`
 	Meta   Meta   `gorm:"embedded" json:"meta" validate:"required"`
 }
+
+type BookListResponse = ListResponse[Book]

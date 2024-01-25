@@ -19,3 +19,10 @@ type TokenResponse struct {
 type ErrorResponse struct {
 	Msg string `json:"msg"`
 }
+
+type ListResponse[T any] struct {
+	Count  int `json:"count"`
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+	Data   []T `json:"data"`
+}

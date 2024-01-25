@@ -20,7 +20,7 @@ import (
 // @Produce json
 // @Param offset query integer false "offset"
 // @Param limit query integer false "limit"
-// @Success 200 {array} schema.Book
+// @Success 200 {object} schema.BookListResponse
 // @Failure 400 {object} schema.ErrorResponse "Error"
 // @Router /api/v1/books [get]
 func GetBooks(c *fiber.Ctx) error {
