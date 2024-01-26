@@ -17,10 +17,12 @@ func PrivateRoutes(a *fiber.App) {
 	adminRoute.Get("/:id", controller.GetUser)
 	adminRoute.Put("/:id", controller.UpdateUser)
 	adminRoute.Delete("/:id", controller.DeleteUser)
-
 	// Book
 	route := a.Group("/api/v1/books", middleware.JWTProtected())
 	route.Post("/", controller.CreateBook)
 	route.Put("/:id", controller.UpdateBook)
 	route.Delete("/:id", controller.DeleteBook)
+	// Auth
+	a.Post("/api/v1/auth/logout", middleware.JWTProtected(), controller.Logout)
+	a.Post("/api/v1/auth/jwt", middleware.JWTProtected(), controller.JWT)
 }

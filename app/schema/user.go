@@ -19,8 +19,8 @@ type User struct {
 }
 
 type Auth struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" default:"demo"`
+	Password string `json:"password" default:"123456"`
 }
 
 type CreateUser struct {

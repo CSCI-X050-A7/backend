@@ -14,23 +14,25 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// GetNewAccessToken method for create a new access token.
-// @Description Create a new access token.
-// @Summary create a new access token
-// @Tags Token
+// Login method for creating a new access token.
+// @Description Set new access token to cookies and redirect. Demo username: demo, password: 123456
+// @Summary login
+// @Tags Auth
 // @Accept json
 // @Produce json
 // @Param login body schema.Auth true "Request for token"
+// @Param redirect_url query string false "Redirect url after login"
 // @Failure 400,404,401,500 {object} schema.ErrorResponse "Error"
 // @Success 200 {object} schema.TokenResponse "Ok"
-// @Router /api/v1/token/new [post]
-func GetNewAccessToken(c *fiber.Ctx) error {
+// @Router /api/v1/auth/login [post]
+func Login(c *fiber.Ctx) error {
 	login := &schema.Auth{}
 	if err := c.BodyParser(login); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
+	redirect_url := c.Params("redirect_url", "/")
 	user := model.User{UserName: login.Username}
 	err := db.First(&user).Error
 	if err != nil {
@@ -60,12 +62,57 @@ func GetNewAccessToken(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
-
+	c.Cookie(&fiber.Cookie{
+		Name:  "access_token",
+		Value: token,
+		Expires: time.Now().
+			Add(time.Duration(config.Conf.JWTExpireSeconds) * time.Second),
+		HTTPOnly: true,
+		SameSite: "lax",
+	})
 	return c.JSON(fiber.Map{
 		"msg": fmt.Sprintf("Token will be expired within %d seconds",
 			config.Conf.JWTExpireSeconds),
 		"access_token": token,
+		"redirect_url": redirect_url,
 	})
+}
+
+// Logout method.
+// @Description Clean cookies
+// @Summary Logout
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Failure 400,404,401,500 {object} schema.ErrorResponse "Error"
+// @Success 200 {object} interface{} "Ok"
+// @Security ApiKeyAuth
+// @Router /api/v1/auth/logout [post]
+func Logout(c *fiber.Ctx) error {
+	c.Cookie(&fiber.Cookie{
+		Name: "access_token",
+		// Set expiry date to the past
+		Expires:  time.Now().Add(-(time.Hour * 2)),
+		HTTPOnly: true,
+		SameSite: "lax",
+	})
+	return nil
+}
+
+// Get current JWT method for debugging.
+// @Description Get current JWT.
+// @Summary JWT
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Failure 400,404,401,500 {object} schema.ErrorResponse "Error"
+// @Success 200 {object} interface{} "Ok"
+// @Security ApiKeyAuth
+// @Router /api/v1/auth/jwt [post]
+func JWT(c *fiber.Ctx) error {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	return c.JSON(claims)
 }
 
 func GenerateNewAccessToken(userID uuid.UUID, isAdmin bool) (string, error) {

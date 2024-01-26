@@ -10,6 +10,7 @@ import (
 // JWTProtected func for specify route group with JWT authentication.
 func JWTProtected() func(*fiber.Ctx) error {
 	return jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{Key: []byte(config.Conf.JWTSecret)},
+		SigningKey:  jwtware.SigningKey{Key: []byte(config.Conf.JWTSecret)},
+		TokenLookup: "header:Authorization,cookie:access_token",
 	})
 }

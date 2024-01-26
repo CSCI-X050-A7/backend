@@ -2,8 +2,10 @@ definitions:
   schema.Auth:
     properties:
       password:
+        default: "123456"
         type: string
       username:
+        default: demo
         type: string
     type: object
   schema.Book:
@@ -119,6 +121,8 @@ definitions:
         type: string
       msg:
         type: string
+      redirect_url:
+        type: string
     type: object
   schema.UpdateUser:
     properties:
@@ -179,6 +183,115 @@ info:
   title: Fiber Go API
   version: "1.0"
 paths:
+  /api/v1/auth/jwt:
+    post:
+      consumes:
+      - application/json
+      description: Get current JWT.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: object
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: JWT
+      tags:
+      - Auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 'Set new access token to cookies and redirect. Demo username: demo,
+        password: 123456'
+      parameters:
+      - description: Request for token
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/schema.Auth'
+      - description: Redirect url after login
+        in: query
+        name: redirect_url
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/schema.TokenResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      summary: login
+      tags:
+      - Auth
+  /api/v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Clean cookies
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: object
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Logout
+      tags:
+      - Auth
   /api/v1/books:
     get:
       consumes:
@@ -357,44 +470,6 @@ paths:
       summary: update a book
       tags:
       - Book
-  /api/v1/token/new:
-    post:
-      consumes:
-      - application/json
-      description: Create a new access token.
-      parameters:
-      - description: Request for token
-        in: body
-        name: login
-        required: true
-        schema:
-          $ref: '#/definitions/schema.Auth'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Ok
-          schema:
-            $ref: '#/definitions/schema.TokenResponse'
-        "400":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "401":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "404":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "500":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-      summary: create a new access token
-      tags:
-      - Token
   /api/v1/users:
     get:
       consumes:
