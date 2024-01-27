@@ -106,7 +106,7 @@ func Logout(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Failure 400,404,401,500 {object} schema.ErrorResponse "Error"
-// @Success 200 {object} interface{} "Ok"
+// @Success 200 {object} schema.JWT "Ok"
 // @Security ApiKeyAuth
 // @Router /api/v1/auth/jwt [post]
 func JWT(c *fiber.Ctx) error {

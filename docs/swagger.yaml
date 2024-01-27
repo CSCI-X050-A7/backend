@@ -104,6 +104,15 @@ definitions:
       msg:
         type: string
     type: object
+  schema.JWT:
+    properties:
+      admin:
+        type: boolean
+      exp:
+        type: integer
+      user_id:
+        type: string
+    type: object
   schema.Meta:
     properties:
       description:
@@ -183,6 +192,210 @@ info:
   title: Fiber Go API
   version: "1.0"
 paths:
+  /api/v1/admin/users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users.
+      parameters:
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schema.UserListResponse'
+            type: array
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "403":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: get all users
+      tags:
+      - Admin
+    post:
+      consumes:
+      - application/json
+      description: Create a new user.
+      parameters:
+      - description: Create new user
+        in: body
+        name: createuser
+        required: true
+        schema:
+          $ref: '#/definitions/schema.CreateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/schema.User'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "409":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new user
+      tags:
+      - Admin
+  /api/v1/admin/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: object
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "403":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: delete a user
+      tags:
+      - Admin
+    get:
+      consumes:
+      - application/json
+      description: a user.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.User'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "403":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: get a user
+      tags:
+      - Admin
+    put:
+      consumes:
+      - application/json
+      description: first_name, last_name, is_active, is_admin only
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update a user
+        in: body
+        name: updateuser
+        required: true
+        schema:
+          $ref: '#/definitions/schema.UpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.User'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "403":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: update a user
+      tags:
+      - Admin
   /api/v1/auth/jwt:
     post:
       consumes:
@@ -194,7 +407,7 @@ paths:
         "200":
           description: Ok
           schema:
-            type: object
+            $ref: '#/definitions/schema.JWT'
         "400":
           description: Error
           schema:
@@ -470,134 +683,11 @@ paths:
       summary: update a book
       tags:
       - Book
-  /api/v1/users:
+  /api/v1/users/me:
     get:
       consumes:
       - application/json
-      description: Get all users.
-      parameters:
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/schema.UserListResponse'
-            type: array
-        "400":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "401":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "403":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: get all users
-      tags:
-      - User
-    post:
-      consumes:
-      - application/json
-      description: Create a new user.
-      parameters:
-      - description: Create new user
-        in: body
-        name: createuser
-        required: true
-        schema:
-          $ref: '#/definitions/schema.CreateUser'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Ok
-          schema:
-            $ref: '#/definitions/schema.User'
-        "400":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "401":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "409":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "500":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: create a new user
-      tags:
-      - User
-  /api/v1/users/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: delete user
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Ok
-          schema:
-            type: object
-        "401":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "403":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "404":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "500":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: delete a user
-      tags:
-      - User
-    get:
-      consumes:
-      - application/json
-      description: a user.
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: string
+      description: a user me.
       produces:
       - application/json
       responses:
@@ -623,55 +713,7 @@ paths:
             $ref: '#/definitions/schema.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: get a user
-      tags:
-      - User
-    put:
-      consumes:
-      - application/json
-      description: first_name, last_name, is_active, is_admin only
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Update a user
-        in: body
-        name: updateuser
-        required: true
-        schema:
-          $ref: '#/definitions/schema.UpdateUser'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schema.User'
-        "400":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "401":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "403":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "404":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-        "500":
-          description: Error
-          schema:
-            $ref: '#/definitions/schema.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: update a user
+      summary: get a user me
       tags:
       - User
 securityDefinitions:

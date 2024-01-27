@@ -31,8 +31,10 @@ func Serve() {
 	// Routes.
 	route.GeneralRoute(app)
 	route.SwaggerRoute(app)
-	route.PublicRoutes(app)
-	route.PrivateRoutes(app)
+	route.AdminRoutes(app)
+	route.AuthRoutes(app)
+	route.BookRoutes(app)
+	route.UserRoutes(app)
 	route.NotFoundRoute(app)
 
 	// signal channel to capture system calls

@@ -41,3 +41,9 @@ type UpdateUser struct {
 }
 
 type UserListResponse = ListResponse[User]
+
+type JWT struct {
+	UserID uuid.UUID `json:"user_id"`
+	Admin  bool      `json:"admin"`
+	Exp    int64     `json:"exp"`
+}
