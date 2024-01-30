@@ -1,1 +1,4 @@
 go.sum merge=union
+docker-compose.yml linguist-vendored
+Dockerfile linguist-vendored
+Makefile linguist-vendored
