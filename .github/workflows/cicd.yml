@@ -63,4 +63,4 @@
                       port: ${{ secrets.PORT }}
                       script: |
                           cd ~/backend
-                          git fetch && git reset --hard
+                          git fetch --all && git reset --hard origin/main
