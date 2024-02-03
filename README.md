@@ -16,8 +16,8 @@ For any fiber go application, just clone the repo & rename the application name.
 - [Swag](https://github.com/swaggo/swag)
 
 ## ⚡️ Quick start
-- Install **`docker`**, **`air`**, & **`swag`**
-- Rename `.env.example` to `.env`
+- Install **`golang 1.21`**, **`air`**, & **`swag`**
+- Copy `.env.example` to `.env` (optional)
 - Run project by this command:
   ```bash
   air
