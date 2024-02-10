@@ -8,6 +8,7 @@ import (
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/config"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gofiber/fiber/v2"
 	jwt "github.com/golang-jwt/jwt/v5"
@@ -33,8 +34,9 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 	redirect_url := c.Params("redirect_url", "/")
-	user := model.User{UserName: login.Username}
-	err := db.First(&user).Error
+	user := model.User{}
+	err := db.Where(&model.User{UserName: login.Username}).First(&user).Error
+	logrus.Infof("user: %v", user)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "username not found",
