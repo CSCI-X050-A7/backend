@@ -33,7 +33,7 @@ func Login(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
-	redirect_url := c.Params("redirect_url", "/")
+	redirect_url := c.Query("redirect_url", "/")
 	user := model.User{}
 	err := db.Where(&model.User{UserName: login.Username}).First(&user).Error
 	logrus.Infof("user: %v", user)
