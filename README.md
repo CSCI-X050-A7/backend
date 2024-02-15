@@ -6,7 +6,7 @@ For any fiber go application, just clone the repo & rename the application name.
 [Fiber](https://gofiber.io/) is an Express.js inspired web framework build on top of Fasthttp, the fastest HTTP engine for Go. Designed to ease things up for **fast** development with **zero memory allocation** and **performance** in mind.
 
 ## Tools & Libraries used
-- [Golang 1.16+](https://golang.org/doc/go1.16)
+- [Golang 1.21+](https://golang.org/doc/go1.21)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Docker](https://www.docker.com/get-started)
 - [Fiber framework](https://github.com/gofiber/fiber)
