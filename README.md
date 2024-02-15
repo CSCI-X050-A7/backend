@@ -16,7 +16,7 @@ For any fiber go application, just clone the repo & rename the application name.
 - [Swag](https://github.com/swaggo/swag)
 
 ## ⚡️ Quick start
-- Install **`golang 1.21`**, **`air`**, & **`swag`**
+- Install **`golang >= 1.21`**, **`air`**, & **`swag`**
 - Copy `.env.example` to `.env` (optional)
 - Run project by this command:
   ```bash
@@ -86,21 +86,6 @@ DB_PASSWORD=dev
 DB_NAME=fiber_go_api
 DB_ECHO=true
 ```
-
-## 🔨 Local Development
-
-- Install **`golang >= 1.21`**, **`swag`**, **`air`**
-- Copy `.env.example` to `.env` and fill it with your environment values
-- Run project by this command:
-  ```bash
-  make run
-  ```
-- Visit **`http://localhost:5000`** or **`http://localhost:5000/swagger/`**
-- Check `Makefile` for more commands
-  ```bash
-  # run test
-  make test
-  ```
 
 ## ⚠️ License
 
