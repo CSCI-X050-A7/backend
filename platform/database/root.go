@@ -33,7 +33,7 @@ func GetGormConfig() gorm.Config {
 
 func MigrateDatabase() error {
 	return DB.AutoMigrate(
-		&model.Book{},
+		&model.Movie{},
 		&model.User{},
 	)
 }

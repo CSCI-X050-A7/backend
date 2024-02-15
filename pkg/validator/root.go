@@ -2,13 +2,14 @@ package validator
 
 import (
 	"fmt"
+
 	vldtr "github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
 // NewValidator func for create a new validator for model fields.
 func NewValidator() *vldtr.Validate {
-	// Create a new validator for a Book model.
+	// Create a new validator for a Movie model.
 	validate := vldtr.New()
 
 	// Custom validation for uuid.UUID fields.

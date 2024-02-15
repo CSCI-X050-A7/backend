@@ -33,7 +33,7 @@ func Serve() {
 	route.SwaggerRoute(app)
 	route.AdminRoutes(app)
 	route.AuthRoutes(app)
-	route.BookRoutes(app)
+	route.MovieRoutes(app)
 	route.UserRoutes(app)
 	route.MiscRoutes(app)
 	route.NotFoundRoute(app)

@@ -8,47 +8,7 @@ definitions:
         default: demo
         type: string
     type: object
-  schema.Book:
-    properties:
-      author:
-        maxLength: 255
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      meta:
-        $ref: '#/definitions/schema.Meta'
-      status:
-        type: integer
-      title:
-        maxLength: 255
-        type: string
-      updated_at:
-        type: string
-      user_id:
-        type: string
-    required:
-    - author
-    - meta
-    - status
-    - title
-    - user_id
-    type: object
-  schema.BookListResponse:
-    properties:
-      count:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/schema.Book'
-        type: array
-      limit:
-        type: integer
-      offset:
-        type: integer
-    type: object
-  schema.CreateBook:
+  schema.CreateMovie:
     properties:
       author:
         maxLength: 255
@@ -122,6 +82,46 @@ definitions:
       rating:
         maximum: 10
         minimum: 1
+        type: integer
+    type: object
+  schema.Movie:
+    properties:
+      author:
+        maxLength: 255
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      meta:
+        $ref: '#/definitions/schema.Meta'
+      status:
+        type: integer
+      title:
+        maxLength: 255
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    required:
+    - author
+    - meta
+    - status
+    - title
+    - user_id
+    type: object
+  schema.MovieListResponse:
+    properties:
+      count:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/schema.Movie'
+        type: array
+      limit:
+        type: integer
+      offset:
         type: integer
     type: object
   schema.TokenResponse:
@@ -505,11 +505,11 @@ paths:
       summary: Logout
       tags:
       - Auth
-  /api/v1/books:
+  /api/v1/movies:
     get:
       consumes:
       - application/json
-      description: Get all books.
+      description: Get all movies.
       parameters:
       - description: offset
         in: query
@@ -525,32 +525,32 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schema.BookListResponse'
+            $ref: '#/definitions/schema.MovieListResponse'
         "400":
           description: Error
           schema:
             $ref: '#/definitions/schema.ErrorResponse'
-      summary: get all books
+      summary: get all movies
       tags:
-      - Book
+      - Movie
     post:
       consumes:
       - application/json
-      description: Create a new book.
+      description: Create a new movie.
       parameters:
-      - description: Create new book
+      - description: Create new movie
         in: body
-        name: createbook
+        name: createmovie
         required: true
         schema:
-          $ref: '#/definitions/schema.CreateBook'
+          $ref: '#/definitions/schema.CreateMovie'
       produces:
       - application/json
       responses:
         "200":
           description: Ok
           schema:
-            $ref: '#/definitions/schema.Book'
+            $ref: '#/definitions/schema.Movie'
         "400":
           description: Error
           schema:
@@ -565,16 +565,16 @@ paths:
             $ref: '#/definitions/schema.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: create a new book
+      summary: create a new movie
       tags:
-      - Book
-  /api/v1/books/{id}:
+      - Movie
+  /api/v1/movies/{id}:
     delete:
       consumes:
       - application/json
-      description: delete book
+      description: delete movie
       parameters:
-      - description: Book ID
+      - description: Movie ID
         in: path
         name: id
         required: true
@@ -604,15 +604,15 @@ paths:
             $ref: '#/definitions/schema.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: delete a book
+      summary: delete a movie
       tags:
-      - Book
+      - Movie
     get:
       consumes:
       - application/json
-      description: a book.
+      description: a movie.
       parameters:
-      - description: Book ID
+      - description: Movie ID
         in: path
         name: id
         required: true
@@ -623,7 +623,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schema.Book'
+            $ref: '#/definitions/schema.Movie'
         "400":
           description: Error
           schema:
@@ -632,32 +632,32 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/schema.ErrorResponse'
-      summary: get a book
+      summary: get a movie
       tags:
-      - Book
+      - Movie
     put:
       consumes:
       - application/json
-      description: update book
+      description: update movie
       parameters:
-      - description: Book ID
+      - description: Movie ID
         in: path
         name: id
         required: true
         type: string
-      - description: Update a book
+      - description: Update a movie
         in: body
-        name: updatebook
+        name: updatemovie
         required: true
         schema:
-          $ref: '#/definitions/schema.Book'
+          $ref: '#/definitions/schema.Movie'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schema.Book'
+            $ref: '#/definitions/schema.Movie'
         "400":
           description: Error
           schema:
@@ -680,9 +680,9 @@ paths:
             $ref: '#/definitions/schema.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: update a book
+      summary: update a movie
       tags:
-      - Book
+      - Movie
   /api/v1/users/me:
     get:
       consumes:

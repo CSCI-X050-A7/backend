@@ -505,9 +505,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/books": {
+        "/api/v1/movies": {
             "get": {
-                "description": "Get all books.",
+                "description": "Get all movies.",
                 "consumes": [
                     "application/json"
                 ],
@@ -515,9 +515,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Book"
+                    "Movie"
                 ],
-                "summary": "get all books",
+                "summary": "get all movies",
                 "parameters": [
                     {
                         "type": "integer",
@@ -536,7 +536,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schema.BookListResponse"
+                            "$ref": "#/definitions/schema.MovieListResponse"
                         }
                     },
                     "400": {
@@ -553,7 +553,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Create a new book.",
+                "description": "Create a new movie.",
                 "consumes": [
                     "application/json"
                 ],
@@ -561,17 +561,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Book"
+                    "Movie"
                 ],
-                "summary": "create a new book",
+                "summary": "create a new movie",
                 "parameters": [
                     {
-                        "description": "Create new book",
-                        "name": "createbook",
+                        "description": "Create new movie",
+                        "name": "createmovie",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schema.CreateBook"
+                            "$ref": "#/definitions/schema.CreateMovie"
                         }
                     }
                 ],
@@ -579,7 +579,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Ok",
                         "schema": {
-                            "$ref": "#/definitions/schema.Book"
+                            "$ref": "#/definitions/schema.Movie"
                         }
                     },
                     "400": {
@@ -603,9 +603,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/books/{id}": {
+        "/api/v1/movies/{id}": {
             "get": {
-                "description": "a book.",
+                "description": "a movie.",
                 "consumes": [
                     "application/json"
                 ],
@@ -613,13 +613,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Book"
+                    "Movie"
                 ],
-                "summary": "get a book",
+                "summary": "get a movie",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Book ID",
+                        "description": "Movie ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -629,7 +629,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schema.Book"
+                            "$ref": "#/definitions/schema.Movie"
                         }
                     },
                     "400": {
@@ -652,7 +652,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "update book",
+                "description": "update movie",
                 "consumes": [
                     "application/json"
                 ],
@@ -660,24 +660,24 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Book"
+                    "Movie"
                 ],
-                "summary": "update a book",
+                "summary": "update a movie",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Book ID",
+                        "description": "Movie ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Update a book",
-                        "name": "updatebook",
+                        "description": "Update a movie",
+                        "name": "updatemovie",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schema.Book"
+                            "$ref": "#/definitions/schema.Movie"
                         }
                     }
                 ],
@@ -685,7 +685,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schema.Book"
+                            "$ref": "#/definitions/schema.Movie"
                         }
                     },
                     "400": {
@@ -726,7 +726,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "delete book",
+                "description": "delete movie",
                 "consumes": [
                     "application/json"
                 ],
@@ -734,13 +734,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Book"
+                    "Movie"
                 ],
-                "summary": "delete a book",
+                "summary": "delete a movie",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Book ID",
+                        "description": "Movie ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -869,65 +869,7 @@ const docTemplate = `{
                 }
             }
         },
-        "schema.Book": {
-            "type": "object",
-            "required": [
-                "author",
-                "meta",
-                "status",
-                "title",
-                "user_id"
-            ],
-            "properties": {
-                "author": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "meta": {
-                    "$ref": "#/definitions/schema.Meta"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "schema.BookListResponse": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schema.Book"
-                    }
-                },
-                "limit": {
-                    "type": "integer"
-                },
-                "offset": {
-                    "type": "integer"
-                }
-            }
-        },
-        "schema.CreateBook": {
+        "schema.CreateMovie": {
             "type": "object",
             "required": [
                 "author",
@@ -1031,6 +973,64 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 10,
                     "minimum": 1
+                }
+            }
+        },
+        "schema.Movie": {
+            "type": "object",
+            "required": [
+                "author",
+                "meta",
+                "status",
+                "title",
+                "user_id"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "$ref": "#/definitions/schema.Meta"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.MovieListResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schema.Movie"
+                    }
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
                 }
             }
         },
