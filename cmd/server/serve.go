@@ -35,6 +35,7 @@ func Serve() {
 	route.AuthRoutes(app)
 	route.BookRoutes(app)
 	route.UserRoutes(app)
+	route.MiscRoutes(app)
 	route.NotFoundRoute(app)
 
 	// signal channel to capture system calls

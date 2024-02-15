@@ -716,6 +716,20 @@ paths:
       summary: get a user me
       tags:
       - User
+  /api/v1/version:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      summary: get current software version
+      tags:
+      - Misc
 securityDefinitions:
   ApiKeyAuth:
     in: header
