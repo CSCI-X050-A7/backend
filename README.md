@@ -87,19 +87,10 @@ DB_NAME=fiber_go_api
 DB_ECHO=true
 ```
 
-## 🔨 Docker development
-
-- Install **`docker`**, **`docker-compose`** & **`golang-migrate`**
-- Rename `.env.example` to `.env`
-- Start db container `docker-compose up db`
-- Run migrations `make migrate.up`
-- Now start api server with hot reloading `make docker.dev`
-- Visit **`http://localhost:5000`** or **`http://localhost:5000/swagger/`**
-
 ## 🔨 Local Development
 
-- Install **`PostgreSQL`** **`golang  >= 1.16`** **`golang-migrate`** **`gosec`** & **`swag`**
-- Rename `.env.example` to `.env` and fill it with your environment values
+- Install **`golang >= 1.21`**, **`swag`**, **`air`**
+- Copy `.env.example` to `.env` and fill it with your environment values
 - Run project by this command:
   ```bash
   make run
@@ -107,15 +98,8 @@ DB_ECHO=true
 - Visit **`http://localhost:5000`** or **`http://localhost:5000/swagger/`**
 - Check `Makefile` for more commands
   ```bash
-  # drop migration
-  make migrate.down
-
-  # force migration to specific version
-  migrate.force
-
   # run test
   make test
-  ...
   ```
 
 ## ⚠️ License
