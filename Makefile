@@ -1,4 +1,4 @@
-.PHONY: clean test security build run
+.PHONY: clean critic security lint test swag build run
 
 APP_NAME = backend
 BUILD_DIR = ./build
