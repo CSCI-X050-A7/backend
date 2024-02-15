@@ -14,7 +14,7 @@ type Pagination struct {
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
 	Msg         string `json:"msg"`
-    RedirectUrl string `json:"redirect_url"`
+	RedirectUrl string `json:"redirect_url"`
 }
 
 type ErrorResponse struct {
