@@ -8,36 +8,32 @@ import (
 
 // Movie struct to describe movie object.
 type Movie struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	UserID    uuid.UUID `json:"user_id" validate:"required"`
-	Title     string    `json:"title" validate:"required,lte=255"`
-	Author    string    `json:"author" validate:"required,lte=255"`
-	Status    int       `json:"status" validate:"required,len=1"`
-	Meta      Meta      `gorm:"embedded" json:"meta" validate:"required"`
+	ID             uuid.UUID `json:"id"`
+	Title          string    `json:"title" validate:"required,lte=255"`
+	Category       string    `json:"category" validate:"required,lte=255"`
+	Cast           string    `json:"cast" validate:"required,lte=255"`
+	Director       string    `json:"director" validate:"required,lte=255"`
+	Producer       string    `json:"producer" validate:"required,lte=255"`
+	Synopsis       string    `json:"synopsis" validate:"required,lte=255"`
+	Reviews        string    `json:"reviews" validate:"required,lte=255"`
+	TrailerPicture string    `json:"trailer_picture" validate:"required,lte=1023"`
+	TrailerVideo   string    `json:"trailer_video" validate:"required,lte=1023"`
+	RatingCode     string    `json:"rating_code" validate:"required,lte=255"`
+	ShowTime       time.Time `json:"show_time" validate:"required,lte=255"`
 }
 
-// Meta struct to describe movie attributes.
-type Meta struct {
-	Picture     string `json:"picture"`
-	Description string `json:"description"`
-	Rating      int    `json:"rating" validate:"min=1,max=10"`
-}
-
-type CreateMovie struct {
-	UserID uuid.UUID `json:"user_id" validate:"required"`
-	Title  string    `json:"title" validate:"required,lte=255"`
-	Author string    `json:"author" validate:"required,lte=255"`
-	Status int       `json:"status" validate:"required,len=1"`
-	Meta   Meta      `gorm:"embedded" json:"meta" validate:"required"`
-}
-
-type UpdateMovie struct {
-	Title  string `json:"title" validate:"required,lte=255"`
-	Author string `json:"author" validate:"required,lte=255"`
-	Status int    `json:"status" validate:"required,len=1"`
-	Meta   Meta   `gorm:"embedded" json:"meta" validate:"required"`
+type UpsertMovie struct {
+	Title          string    `json:"title" validate:"required,lte=255"`
+	Category       string    `json:"category" validate:"required,lte=255"`
+	Cast           string    `json:"cast" validate:"required,lte=255"`
+	Director       string    `json:"director" validate:"required,lte=255"`
+	Producer       string    `json:"producer" validate:"required,lte=255"`
+	Synopsis       string    `json:"synopsis" validate:"required,lte=255"`
+	Reviews        string    `json:"reviews" validate:"required,lte=255"`
+	TrailerPicture string    `json:"trailer_picture" validate:"required,lte=1023"`
+	TrailerVideo   string    `json:"trailer_video" validate:"required,lte=1023"`
+	RatingCode     string    `json:"rating_code" validate:"required,lte=255"`
+	ShowTime       time.Time `json:"show_time" validate:"required"`
 }
 
 type MovieListResponse = ListResponse[Movie]

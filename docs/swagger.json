@@ -522,6 +522,18 @@
                         "description": "limit",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search by title",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the moive is running or not",
+                        "name": "running",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -559,11 +571,11 @@
                 "parameters": [
                     {
                         "description": "Create new movie",
-                        "name": "createmovie",
+                        "name": "movie",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schema.CreateMovie"
+                            "$ref": "#/definitions/schema.UpsertMovie"
                         }
                     }
                 ],
@@ -861,35 +873,6 @@
                 }
             }
         },
-        "schema.CreateMovie": {
-            "type": "object",
-            "required": [
-                "author",
-                "meta",
-                "status",
-                "title",
-                "user_id"
-            ],
-            "properties": {
-                "author": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "meta": {
-                    "$ref": "#/definitions/schema.Meta"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "schema.CreateUser": {
             "type": "object",
             "required": [
@@ -952,57 +935,68 @@
                 }
             }
         },
-        "schema.Meta": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "picture": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "integer",
-                    "maximum": 10,
-                    "minimum": 1
-                }
-            }
-        },
         "schema.Movie": {
             "type": "object",
             "required": [
-                "author",
-                "meta",
-                "status",
+                "cast",
+                "category",
+                "director",
+                "producer",
+                "rating_code",
+                "reviews",
+                "show_time",
+                "synopsis",
                 "title",
-                "user_id"
+                "trailer_picture",
+                "trailer_video"
             ],
             "properties": {
-                "author": {
+                "cast": {
                     "type": "string",
                     "maxLength": 255
                 },
-                "created_at": {
-                    "type": "string"
+                "category": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "director": {
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "id": {
                     "type": "string"
                 },
-                "meta": {
-                    "$ref": "#/definitions/schema.Meta"
+                "producer": {
+                    "type": "string",
+                    "maxLength": 255
                 },
-                "status": {
-                    "type": "integer"
+                "rating_code": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "reviews": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_time": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "synopsis": {
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "title": {
                     "type": "string",
                     "maxLength": 255
                 },
-                "updated_at": {
-                    "type": "string"
+                "trailer_picture": {
+                    "type": "string",
+                    "maxLength": 1023
                 },
-                "user_id": {
-                    "type": "string"
+                "trailer_video": {
+                    "type": "string",
+                    "maxLength": 1023
                 }
             }
         },
@@ -1060,6 +1054,67 @@
                 "last_name": {
                     "type": "string",
                     "maxLength": 100
+                }
+            }
+        },
+        "schema.UpsertMovie": {
+            "type": "object",
+            "required": [
+                "cast",
+                "category",
+                "director",
+                "producer",
+                "rating_code",
+                "reviews",
+                "show_time",
+                "synopsis",
+                "title",
+                "trailer_picture",
+                "trailer_video"
+            ],
+            "properties": {
+                "cast": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "category": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "director": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "producer": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "rating_code": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "reviews": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_time": {
+                    "type": "string"
+                },
+                "synopsis": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "trailer_picture": {
+                    "type": "string",
+                    "maxLength": 1023
+                },
+                "trailer_video": {
+                    "type": "string",
+                    "maxLength": 1023
                 }
             }
         },

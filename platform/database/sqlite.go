@@ -41,7 +41,7 @@ func ConnectSqlite() {
 		logrus.Fatalf("failed database setup. error: %v", err)
 	}
 	if err := MigrateDatabase(); err != nil {
-		logrus.Fatalf("failed to migrate in Postgres: %+v", err)
+		logrus.Fatalf("failed to migrate in Sqlite: %+v", err)
 	}
 	if err := CreateDemoUser(); err != nil {
 		logrus.Infof("failed to create demo user: %+v", err)

@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
@@ -8,7 +11,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -20,13 +22,27 @@ import (
 // @Produce json
 // @Param offset query integer false "offset"
 // @Param limit query integer false "limit"
+// @Param search query string false "search by title"
+// @Param running query bool false "the moive is running or not"
 // @Success 200 {object} schema.MovieListResponse
 // @Failure 400 {object} schema.ErrorResponse "Error"
 // @Router /api/v1/movies [get]
 func GetMovies(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
+	showTimeQuery := "show_time > ?"
+	if c.Query("running", "true") == "true" {
+		showTimeQuery = "show_time < ?"
+	}
+	search := c.Query("search", "")
+	statement := db.Model(model.Movie{}).
+		Where(showTimeQuery, time.Now())
+	if search != "" {
+		statement = statement.
+			Where("LOWER(title) LIKE ?", fmt.Sprintf("%%%s%%", search))
+	}
 	objs, count, err := ListObjs[schema.Movie](
-		db.Model(model.Movie{}), pagination,
+		statement,
+		pagination,
 	)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -74,23 +90,14 @@ func GetMovie(c *fiber.Ctx) error {
 // @Tags Movie
 // @Accept json
 // @Produce json
-// @Param createmovie body schema.CreateMovie true "Create new movie"
+// @Param movie body schema.UpsertMovie true "Create new movie"
 // @Failure 400,401,500 {object} schema.ErrorResponse "Error"
 // @Success 200 {object} schema.Movie "Ok"
 // @Security ApiKeyAuth
 // @Router /api/v1/movies [post]
 func CreateMovie(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userID, ok := claims["user_id"]
-	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "can't extract user info from request",
-		})
-	}
-
 	// Create new Movie struct
-	createMovie := &schema.CreateMovie{}
+	createMovie := &schema.UpsertMovie{}
 	if err := c.BodyParser(createMovie); err != nil {
 		// Return 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -98,16 +105,6 @@ func CreateMovie(c *fiber.Ctx) error {
 		})
 	}
 	logrus.Infof("create movie: %+v", createMovie)
-
-	var err error
-	createMovie.UserID, err = uuid.Parse(userID.(string))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": err.Error(),
-		})
-	}
-
-	createMovie.Status = 1 // Active
 
 	// Create a new validator for a Movie model.
 	validate := validator.NewValidator()
@@ -161,7 +158,7 @@ func UpdateMovie(c *fiber.Ctx) error {
 		})
 	}
 
-	updateMovie := &schema.UpdateMovie{}
+	updateMovie := &schema.UpsertMovie{}
 	if err := c.BodyParser(updateMovie); err != nil {
 		// Return 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
