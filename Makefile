@@ -44,11 +44,10 @@ build: swag clean
 	CGO_ENABLED=1 go build -ldflags=$(FLAGS) -o $(BUILD_DIR)/$(APP_NAME) main.go
 
 run: build
-	ifeq ($(OS),Windows_NT)
-		$(BUILD_DIR)/$(APP_NAME).exe
-	else
-		$(BUILD_DIR)/$(APP_NAME)
-	endif
+	$(BUILD_DIR)/$(APP_NAME)
+
+run-without-build:
+	$(BUILD_DIR)/$(APP_NAME)
 
 docker.run: docker.setup docker.postgres docker.fiber
 	@echo "\n===========FGB==========="
