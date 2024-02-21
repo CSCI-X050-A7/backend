@@ -23,7 +23,7 @@ import (
 // @Param offset query integer false "offset"
 // @Param limit query integer false "limit"
 // @Param search query string false "search by title"
-// @Param running query bool false "the moive is running or not"
+// @Param running query bool false "the movie is running or not"
 // @Success 200 {object} schema.MovieListResponse
 // @Failure 400 {object} schema.ErrorResponse "Error"
 // @Router /api/v1/movies [get]

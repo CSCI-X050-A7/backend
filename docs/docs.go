@@ -539,7 +539,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
-                        "description": "the moive is running or not",
+                        "description": "the movie is running or not",
                         "name": "running",
                         "in": "query"
                     }
