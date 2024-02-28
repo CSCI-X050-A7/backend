@@ -31,6 +31,7 @@ jobs:
         with:
           version: latest
           args: -v --timeout 5m
+          install-mode: binary
       - name: Build
         run: go build -v ./main.go
   test:
