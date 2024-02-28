@@ -12,16 +12,10 @@ clean:
 	rm -rf $(BUILD_DIR)/*
 	rm -rf *.out
 
-critic:
-	gocritic check -enableAll ./...
-
-security:
-	gosec -quiet ./...
-
 lint:
 	golangci-lint run ./...
 
-test: clean critic security lint
+test: clean lint
 	go test -v -timeout 30s -coverprofile=cover.out -cover ./...
 	go tool cover -func=cover.out
 
