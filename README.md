@@ -7,17 +7,25 @@ For any fiber go application, just clone the repo & rename the application name.
 
 ## Tools & Libraries used
 - [Golang 1.21+](https://golang.org/doc/go1.21)
-- [PostgreSQL](https://www.postgresql.org/)
+- [PostgreSQL](https://www.postgresql.org)
 - [Docker](https://www.docker.com/get-started)
 - [Fiber framework](https://github.com/gofiber/fiber)
 - [JWT](https://github.com/golang-jwt/jwt)
 - [Swagger docs](https://github.com/swaggo/swag)
 - [Air](https://github.com/cosmtrek/air)
 - [Swag](https://github.com/swaggo/swag)
+- [golangci-lint](https://golangci-lint.run)
 
 ## ⚡️ Quick start
-- Install **`golang >= 1.21`**, **`air`**, & **`swag`**
+- Install **`golang >= 1.21`**, **`air`**, **`swag`**, **`golangci-lint`**
 - Copy `.env.example` to `.env`
+  ```bash
+  cp .env.example .env
+  ```
+- Install pre-commit hook for `golangci-lint`
+  ```bash
+  echo "golangci-lint run --new-from-rev HEAD --fix" > .git/hooks/pre-commit
+  ```
 - Run project by this command:
   ```bash
   air

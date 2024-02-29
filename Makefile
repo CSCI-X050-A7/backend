@@ -13,7 +13,7 @@ clean:
 	rm -rf *.out
 
 lint:
-	golangci-lint run ./...
+	golangci-lint run
 
 test: clean lint
 	go test -v -timeout 30s -coverprofile=cover.out -cover ./...
