@@ -10,7 +10,7 @@ For any fiber go application, just clone the repo & rename the application name.
 - [SQLite](https://www.sqlite.org)
 - [Fiber framework](https://github.com/gofiber/fiber)
 - [JWT](https://github.com/golang-jwt/jwt)
-- [Swagger docs](https://github.com/swaggo/swag)
+- [Swagger docs](https://swagger.io)
 - [Air](https://github.com/cosmtrek/air)
 - [Swag](https://github.com/swaggo/swag)
 - [golangci-lint](https://golangci-lint.run)
