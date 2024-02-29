@@ -26,6 +26,7 @@ jobs:
                   key: ${{ runner.os }}-golang-swag-${{ hashFiles('**/go.sum') }}
                   restore-keys: |
                       ${{ runner.os }}-golang-swag-
+            - run: swag init
             - run: go version
             - name: golangci-lint
               uses: golangci/golangci-lint-action@v4
