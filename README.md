@@ -17,7 +17,7 @@ For any fiber go application, just clone the repo & rename the application name.
 
 ## ⚡️ Quick start
 - Install **`golang >= 1.21`**, **`air`**, & **`swag`**
-- Copy `.env.example` to `.env` (optional)
+- Copy `.env.example` to `.env`
 - Run project by this command:
   ```bash
   air
