@@ -43,15 +43,17 @@ jobs:
               uses: actions/setup-go@v3
               with:
                   go-version: '>=1.21.0'
+            - run: go install github.com/swaggo/swag/cmd/swag@latest
             - name: Setup Golang caches
               uses: actions/cache@v3
               with:
                   path: |
                       ~/.cache/go-build
                       ~/go/pkg/mod
-                  key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+                  key: ${{ runner.os }}-golang-swag-${{ hashFiles('**/go.sum') }}
                   restore-keys: |
-                      ${{ runner.os }}-golang-
+                      ${{ runner.os }}-golang-swag-
+            - run: swag init
             - run: go version
             - name: Test
               run: go test -v ./...
