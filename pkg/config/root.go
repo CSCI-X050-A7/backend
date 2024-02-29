@@ -13,12 +13,8 @@ type conf struct {
 	Port  int    `env:"PORT"                envDefault:"5000"`
 	Https bool   `env:"HTTPS"               envDefault:"false"`
 
-	// sql config
-	DBHost     string `env:"DB_HOST"     envDefault:"localhost"`
-	DBPort     int    `env:"DB_PORT"     envDefault:"5432"`
-	DBUsername string `env:"DB_USERNAME" envDefault:"postgres"`
-	DBPassword string `env:"DB_PASSWORD" envDefault:"pass"`
-	DBName     string `env:"DB_NAME"     envDefault:"horse_production"`
+	// sqlite config
+	DBFilename string `env:"DB_FILENAME" envDefault:"sqlite3.db"`
 	DBEcho     bool   `env:"DB_ECHO"     envDefault:"true"`
 
 	// jwt config

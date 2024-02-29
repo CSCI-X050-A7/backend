@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 
+	"github.com/CSCI-X050-A7/backend/pkg/config"
 	"github.com/google/uuid"
 	sqliteGo "github.com/mattn/go-sqlite3"
 	"github.com/sirupsen/logrus"
@@ -13,7 +14,6 @@ import (
 func ConnectSqlite() {
 	gormConfig := GetGormConfig()
 	const CustomDriverName = "sqlite3_extended"
-	const File = "./test.db"
 	sql.Register(CustomDriverName,
 		&sqliteGo.SQLiteDriver{
 			ConnectHook: func(conn *sqliteGo.SQLiteConn) error {
@@ -28,13 +28,13 @@ func ConnectSqlite() {
 			},
 		},
 	)
-	conn, err := sql.Open(CustomDriverName, File)
+	conn, err := sql.Open(CustomDriverName, config.Conf.DBFilename)
 	if err != nil {
 		panic(err)
 	}
 	DB, err = gorm.Open(sqlite.Dialector{
 		DriverName: CustomDriverName,
-		DSN:        File,
+		DSN:        config.Conf.DBFilename,
 		Conn:       conn,
 	}, &gormConfig)
 	if err != nil {

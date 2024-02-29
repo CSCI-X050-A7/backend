@@ -7,8 +7,7 @@ For any fiber go application, just clone the repo & rename the application name.
 
 ## Tools & Libraries used
 - [Golang 1.21+](https://golang.org/doc/go1.21)
-- [PostgreSQL](https://www.postgresql.org)
-- [Docker](https://www.docker.com/get-started)
+- [SQLite](https://www.sqlite.org)
 - [Fiber framework](https://github.com/gofiber/fiber)
 - [JWT](https://github.com/golang-jwt/jwt)
 - [Swagger docs](https://github.com/swaggo/swag)
@@ -88,11 +87,7 @@ JWT_SECRET="super_secret_here"
 JWT_EXPIRE_SECONDS=1209600
 
 # Database settings:
-DB_HOST=fibergb-postgres
-DB_PORT=5432
-DB_USERNAME=dev
-DB_PASSWORD=dev
-DB_NAME=fiber_go_api
+DB_FILENAME=sqlite3.db
 DB_ECHO=true
 ```
 
