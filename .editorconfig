@@ -9,7 +9,3 @@ insert_final_newline = true
 
 [{go.mod,go.sum,Makefile,Dockerfile,*.go}]
 indent_style = tab
-
-[*.{go,yml,yaml}]
-indent_style = space
-indent_size = 2

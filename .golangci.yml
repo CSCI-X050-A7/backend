@@ -1,5 +1,6 @@
+---
 linters:
-  enable:
-    - gosec
-    - gocritic
-    - gofmt
+    enable:
+        - gosec
+        - gocritic
+        - gofmt

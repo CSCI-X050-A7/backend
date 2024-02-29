@@ -15,18 +15,19 @@ import (
 )
 
 // GetMovies func gets all movies.
-// @Description Get all movies.
-// @Summary get all movies
-// @Tags Movie
-// @Accept json
-// @Produce json
-// @Param offset query integer false "offset"
-// @Param limit query integer false "limit"
-// @Param search query string false "search by title"
-// @Param running query bool false "the movie is running or not"
-// @Success 200 {object} schema.MovieListResponse
-// @Failure 400 {object} schema.ErrorResponse "Error"
-// @Router /api/v1/movies [get]
+//
+//	@Description	Get all movies.
+//	@Summary		get all movies
+//	@Tags			Movie
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset	query		integer	false	"offset"
+//	@Param			limit	query		integer	false	"limit"
+//	@Param			search	query		string	false	"search by title"
+//	@Param			running	query		bool	false	"the movie is running or not"
+//	@Success		200		{object}	schema.MovieListResponse
+//	@Failure		400		{object}	schema.ErrorResponse	"Error"
+//	@Router			/api/v1/movies [get]
 func GetMovies(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
 	showTimeQuery := "show_time > ?"
@@ -58,15 +59,16 @@ func GetMovies(c *fiber.Ctx) error {
 }
 
 // GetMovie func gets a movie.
-// @Description a movie.
-// @Summary get a movie
-// @Tags Movie
-// @Accept json
-// @Produce json
-// @Param id path string true "Movie ID"
-// @Success 200 {object} schema.Movie
-// @Failure 400,404 {object} schema.ErrorResponse "Error"
-// @Router /api/v1/movies/{id} [get]
+//
+//	@Description	a movie.
+//	@Summary		get a movie
+//	@Tags			Movie
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"Movie ID"
+//	@Success		200		{object}	schema.Movie
+//	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
+//	@Router			/api/v1/movies/{id} [get]
 func GetMovie(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -85,16 +87,17 @@ func GetMovie(c *fiber.Ctx) error {
 }
 
 // CreateMovie func for creates a new movie.
-// @Description Create a new movie.
-// @Summary create a new movie
-// @Tags Movie
-// @Accept json
-// @Produce json
-// @Param movie body schema.UpsertMovie true "Create new movie"
-// @Failure 400,401,500 {object} schema.ErrorResponse "Error"
-// @Success 200 {object} schema.Movie "Ok"
-// @Security ApiKeyAuth
-// @Router /api/v1/movies [post]
+//
+//	@Description	Create a new movie.
+//	@Summary		create a new movie
+//	@Tags			Movie
+//	@Accept			json
+//	@Produce		json
+//	@Param			movie		body		schema.UpsertMovie		true	"Create new movie"
+//	@Failure		400,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200			{object}	schema.Movie			"Ok"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/movies [post]
 func CreateMovie(c *fiber.Ctx) error {
 	// Create new Movie struct
 	createMovie := &schema.UpsertMovie{}
@@ -132,17 +135,18 @@ func CreateMovie(c *fiber.Ctx) error {
 }
 
 // UpdateMovie func update a movie.
-// @Description update movie
-// @Summary update a movie
-// @Tags Movie
-// @Accept json
-// @Produce json
-// @Param id path string true "Movie ID"
-// @Param updatemovie body schema.Movie true "Update a movie"
-// @Success 200 {object} schema.Movie
-// @Failure 400,401,403,404,500 {object} schema.ErrorResponse "Error"
-// @Security ApiKeyAuth
-// @Router /api/v1/movies/{id} [put]
+//
+//	@Description	update movie
+//	@Summary		update a movie
+//	@Tags			Movie
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string			true	"Movie ID"
+//	@Param			updatemovie			body		schema.Movie	true	"Update a movie"
+//	@Success		200					{object}	schema.Movie
+//	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/movies/{id} [put]
 func UpdateMovie(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -191,16 +195,17 @@ func UpdateMovie(c *fiber.Ctx) error {
 }
 
 // DeleteMovie func delete a movie.
-// @Description delete movie
-// @Summary delete a movie
-// @Tags Movie
-// @Accept json
-// @Produce json
-// @Param id path string true "Movie ID"
-// @Success 200 {object} interface{} "Ok"
-// @Failure 401,403,404,500 {object} schema.ErrorResponse "Error"
-// @Security ApiKeyAuth
-// @Router /api/v1/movies/{id} [delete]
+//
+//	@Description	delete movie
+//	@Summary		delete a movie
+//	@Tags			Movie
+//	@Accept			json
+//	@Produce		json
+//	@Param			id				path		string					true	"Movie ID"
+//	@Success		200				{object}	interface{}				"Ok"
+//	@Failure		401,403,404,500	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/movies/{id} [delete]
 func DeleteMovie(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {

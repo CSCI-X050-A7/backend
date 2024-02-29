@@ -16,16 +16,17 @@ import (
 )
 
 // Login method for creating a new access token.
-// @Description Set new access token to cookies and redirect. Demo username: demo, password: 123456
-// @Summary login
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param login body schema.Auth true "Request for token"
-// @Param redirect_url query string false "Redirect url after login"
-// @Failure 400,404,401,500 {object} schema.ErrorResponse "Error"
-// @Success 200 {object} schema.TokenResponse "Ok"
-// @Router /api/v1/auth/login [post]
+//
+//	@Description	Set new access token to cookies and redirect. Demo username: demo, password: 123456
+//	@Summary		login
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			login			body		schema.Auth				true	"Request for token"
+//	@Param			redirect_url	query		string					false	"Redirect url after login"
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	schema.TokenResponse	"Ok"
+//	@Router			/api/v1/auth/login [post]
 func Login(c *fiber.Ctx) error {
 	login := &schema.Auth{}
 	if err := c.BodyParser(login); err != nil {
@@ -81,15 +82,16 @@ func Login(c *fiber.Ctx) error {
 }
 
 // Logout method.
-// @Description Clean cookies
-// @Summary Logout
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Failure 400,404,401,500 {object} schema.ErrorResponse "Error"
-// @Success 200 {object} interface{} "Ok"
-// @Security ApiKeyAuth
-// @Router /api/v1/auth/logout [post]
+//
+//	@Description	Clean cookies
+//	@Summary		Logout
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	interface{}				"Ok"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/auth/logout [post]
 func Logout(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name: "access_token",
@@ -102,15 +104,16 @@ func Logout(c *fiber.Ctx) error {
 }
 
 // Get current JWT method for debugging.
-// @Description Get current JWT.
-// @Summary JWT
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Failure 400,404,401,500 {object} schema.ErrorResponse "Error"
-// @Success 200 {object} schema.JWT "Ok"
-// @Security ApiKeyAuth
-// @Router /api/v1/auth/jwt [post]
+//
+//	@Description	Get current JWT.
+//	@Summary		JWT
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	schema.JWT				"Ok"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/auth/jwt [post]
 func JWT(c *fiber.Ctx) error {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)

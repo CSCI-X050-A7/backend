@@ -15,22 +15,23 @@ For any fiber go application, just clone the repo & rename the application name.
 - [Air](https://github.com/cosmtrek/air)
 - [Swag](https://github.com/swaggo/swag)
 - [golangci-lint](https://golangci-lint.run)
+- [pre-commit](https://pre-commit.com)
 
 ## ⚡️ Quick start
-- Install **`golang >= 1.21`**, **`air`**, **`swag`**, **`golangci-lint`**
+- Install **`golang >= 1.21`**, **`air`**, **`swag`**, **`golangci-lint`**, **`pre-commit`**
 - Copy `.env.example` to `.env`
   ```bash
   cp .env.example .env
   ```
-- Install pre-commit hook for `golangci-lint`
+- Install pre-commit hooks
   ```bash
-  echo "golangci-lint run --new-from-rev HEAD --fix" > .git/hooks/pre-commit
+  pre-commit install
   ```
 - Run project by this command:
   ```bash
   air
   ```
-- Visit **`http://localhost:5000`** or **`http://localhost:5000/swagger/`**
+- Visit **`http://localhost:5000`** or **`http://localhost:5000/swagger`**
 
 ## 🗄 Project structure
 

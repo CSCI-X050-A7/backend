@@ -1,4 +1,4 @@
-.PHONY: clean critic security lint test swag build run
+.PHONY: all clean critic security lint test swag build run
 
 APP_NAME = backend
 BUILD_DIR = ./build
@@ -7,6 +7,9 @@ DB_NAME = fiber_go_api
 DB_USER = dev
 DB_PASS = dev
 DATABASE_URL = postgres://$(DB_USER):$(DB_PASS)@localhost/$(DB_NAME)?sslmode=disable
+
+all:
+	air
 
 clean:
 	rm -rf $(BUILD_DIR)/*

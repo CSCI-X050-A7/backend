@@ -11,17 +11,18 @@ import (
 )
 
 // GetUsers func get all users.
-// @Description Get all users.
-// @Summary get all users
-// @Tags Admin
-// @Accept json
-// @Produce json
-// @Param offset query integer false "offset"
-// @Param limit query integer false "limit"
-// @Success 200 {array} schema.UserListResponse
-// @Failure 400,401,403 {object} schema.ErrorResponse "Error"
-// @Security ApiKeyAuth
-// @Router /api/v1/admin/users [get]
+//
+//	@Description	Get all users.
+//	@Summary		get all users
+//	@Tags			Admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		integer	false	"offset"
+//	@Param			limit		query		integer	false	"limit"
+//	@Success		200			{array}		schema.UserListResponse
+//	@Failure		400,401,403	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/admin/users [get]
 func AdminGetUsers(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
 	objs, count, err := ListObjs[schema.User](
@@ -41,16 +42,17 @@ func AdminGetUsers(c *fiber.Ctx) error {
 }
 
 // GetUser func get a user.
-// @Description a user.
-// @Summary get a user
-// @Tags Admin
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Success 200 {object} schema.User
-// @Failure 400,401,403,404 {object} schema.ErrorResponse "Error"
-// @Security ApiKeyAuth
-// @Router /api/v1/admin/users/{id} [get]
+//
+//	@Description	a user.
+//	@Summary		get a user
+//	@Tags			Admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			id				path		string	true	"User ID"
+//	@Success		200				{object}	schema.User
+//	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/admin/users/{id} [get]
 func AdminGetUser(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -69,16 +71,17 @@ func AdminGetUser(c *fiber.Ctx) error {
 }
 
 // CreateUser func for creates a new user.
-// @Description Create a new user.
-// @Summary create a new user
-// @Tags Admin
-// @Accept json
-// @Produce json
-// @Param createuser body schema.CreateUser true "Create new user"
-// @Failure 400,401,409,500 {object} schema.ErrorResponse "Error"
-// @Success 200 {object} schema.User "Ok"
-// @Security ApiKeyAuth
-// @Router /api/v1/admin/users [post]
+//
+//	@Description	Create a new user.
+//	@Summary		create a new user
+//	@Tags			Admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			createuser		body		schema.CreateUser		true	"Create new user"
+//	@Failure		400,401,409,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	schema.User				"Ok"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/admin/users [post]
 func AdminCreateUser(c *fiber.Ctx) error {
 	// Create new User struct
 	createUser := &schema.CreateUser{}
@@ -131,17 +134,18 @@ func AdminCreateUser(c *fiber.Ctx) error {
 }
 
 // UpdateUser func update a user.
-// @Description first_name, last_name, is_active, is_admin only
-// @Summary update a user
-// @Tags Admin
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Param updateuser body schema.UpdateUser true "Update a user"
-// @Success 200 {object} schema.User
-// @Failure 400,401,403,404,500 {object} schema.ErrorResponse "Error"
-// @Security ApiKeyAuth
-// @Router /api/v1/admin/users/{id} [put]
+//
+//	@Description	first_name, last_name, is_active, is_admin only
+//	@Summary		update a user
+//	@Tags			Admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string				true	"User ID"
+//	@Param			updateuser			body		schema.UpdateUser	true	"Update a user"
+//	@Success		200					{object}	schema.User
+//	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/admin/users/{id} [put]
 func AdminUpdateUser(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -190,16 +194,17 @@ func AdminUpdateUser(c *fiber.Ctx) error {
 }
 
 // DeleteUser func delete a user.
-// @Description delete user
-// @Summary delete a user
-// @Tags Admin
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Success 200 {object} interface{} "Ok"
-// @Failure 401,403,404,500 {object} schema.ErrorResponse "Error"
-// @Security ApiKeyAuth
-// @Router /api/v1/admin/users/{id} [delete]
+//
+//	@Description	delete user
+//	@Summary		delete a user
+//	@Tags			Admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			id				path		string					true	"User ID"
+//	@Success		200				{object}	interface{}				"Ok"
+//	@Failure		401,403,404,500	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/admin/users/{id} [delete]
 func AdminDeleteUser(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
