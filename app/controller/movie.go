@@ -31,12 +31,15 @@ import (
 func GetMovies(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
 	showTimeQuery := "show_time > ?"
-	if c.Query("running", "true") == "true" {
+	runningQuery := c.Query("running")
+	if runningQuery == "true" {
 		showTimeQuery = "show_time < ?"
 	}
 	search := c.Query("search", "")
-	statement := db.Model(model.Movie{}).
-		Where(showTimeQuery, time.Now())
+	statement := db.Model(model.Movie{})
+	if runningQuery != "" {
+		statement = statement.Where(showTimeQuery, time.Now())
+	}
 	if search != "" {
 		statement = statement.
 			Where("LOWER(title) LIKE ?", fmt.Sprintf("%%%s%%", search))
