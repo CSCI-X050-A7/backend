@@ -142,7 +142,7 @@ func CreateMovie(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id					path		string			true	"Movie ID"
-//	@Param			updatemovie			body		schema.Movie	true	"Update a movie"
+//	@Param			updatemovie			body		schema.UpsertMovie	true	"Update a movie"
 //	@Success		200					{object}	schema.Movie
 //	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth

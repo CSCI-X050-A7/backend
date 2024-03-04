@@ -8,7 +8,7 @@ import (
 
 // Movie struct to describe movie object.
 type Movie struct {
-	ID             uuid.UUID `json:"id"`
+	ID             uuid.UUID `json:"id" validate:"required"`
 	Title          string    `json:"title" validate:"required,lte=255"`
 	Category       string    `json:"category" validate:"required,lte=255"`
 	Cast           string    `json:"cast" validate:"required,lte=255"`

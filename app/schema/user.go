@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID        uuid.UUID `json:"id"`
+	ID        uuid.UUID `json:"id" validate:"required"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	IsActive  bool      `json:"is_active"`
