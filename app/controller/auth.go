@@ -1,12 +1,17 @@
 package controller
 
 import (
+	"crypto/rand"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/config"
+	"github.com/CSCI-X050-A7/backend/pkg/convert"
+	"github.com/CSCI-X050-A7/backend/pkg/email"
+	"github.com/CSCI-X050-A7/backend/pkg/validator"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
@@ -79,6 +84,123 @@ func Login(c *fiber.Ctx) error {
 		"access_token": token,
 		"redirect_url": redirect_url,
 	})
+}
+
+// Register method for creating a new unactivated user.
+//
+//	@Description	Register for a new user.
+//	@Summary		register
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			register		body		schema.RegisterUser		true	"register user"
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	schema.User	"Ok"
+//	@Router			/api/v1/auth/register [post]
+func Register(c *fiber.Ctx) error {
+	register := &schema.RegisterUser{}
+	if err := c.BodyParser(register); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	validate := validator.NewValidator()
+	if err := validate.Struct(register); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg":    "invalid input found",
+			"errors": validator.ValidatorErrors(err),
+		})
+	}
+	// check user already exists
+	result := db.Where(model.User{Email: register.Email}).
+		Or(model.User{UserName: register.UserName}).Find(&model.User{})
+	if result.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": result.Error.Error(),
+		})
+	}
+	if result.RowsAffected != 0 {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"msg": "user with this username or email already exists",
+		})
+	}
+	register.Password, _ = GeneratePasswordHash([]byte(register.Password))
+	newUser := model.User{}
+	if err := convert.Update(&newUser, &register); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	val, err := rand.Int(rand.Reader, big.NewInt(100000))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	newUser.ActivationCode = fmt.Sprintf("%06d", val)
+	if err := db.Create(&newUser).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	go func() {
+		err := email.Send(
+			newUser.Email,
+			"Cinema E-Booking System Register Confirmation",
+			fmt.Sprintf("Link to activate: %s/activate?id=%s&code=%s",
+				config.Conf.Url, newUser.ID, newUser.ActivationCode),
+		)
+		if err != nil {
+			logrus.Errorf("email send error: %v", err)
+		}
+	}()
+	return c.JSON(convert.To[schema.User](newUser))
+}
+
+// Activation method for activating a new unactivated user.
+//
+//	@Description	Activate a new user.
+//	@Summary		activate
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		query		string	false	"id"
+//	@Param			code	query		string	false	"code"
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	schema.User	"Ok"
+//	@Router			/api/v1/auth/activate [post]
+func Activate(c *fiber.Ctx) error {
+	code := c.Query("code")
+	ID, err := uuid.Parse(c.Query("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	user := model.User{ID: ID}
+	err = db.First(&user).Error
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "user not found",
+		})
+	}
+	if user.IsActive {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "user already activated",
+		})
+	}
+	if user.ActivationCode != code {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "activation code is wrong",
+		})
+	}
+	user.IsActive = true
+	if err := db.Save(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	return c.JSON(convert.To[schema.User](user))
 }
 
 // Logout method.

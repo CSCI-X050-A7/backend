@@ -8,18 +8,19 @@ import (
 
 type conf struct {
 	// server config
-	Debug bool   `env:"DEBUG"               envDefault:"false"`
-	Host  string `env:"HOST"                envDefault:"127.0.0.1"`
-	Port  int    `env:"PORT"                envDefault:"5000"`
-	Https bool   `env:"HTTPS"               envDefault:"false"`
+	Debug bool   `env:"DEBUG" envDefault:"false"`
+	Host  string `env:"HOST"  envDefault:"127.0.0.1"`
+	Port  int    `env:"PORT"  envDefault:"5000"`
+	Https bool   `env:"HTTPS" envDefault:"false"`
+	Url   string `env:"URL"   envDefault:"http://example.com"`
 
 	// sqlite config
 	DBFilename string `env:"DB_FILENAME" envDefault:"sqlite3.db"`
 	DBEcho     bool   `env:"DB_ECHO"     envDefault:"true"`
 
 	// jwt config
-	JWTSecret        string `env:"JWT_SECRET"                 envDefault:"secret"`
-	JWTExpireSeconds int64  `env:"JWT_EXPIRE_SECONDS"         envDefault:"1209600"` // 14 days, in seconds
+	JWTSecret        string `env:"JWT_SECRET"         envDefault:"secret"`
+	JWTExpireSeconds int64  `env:"JWT_EXPIRE_SECONDS" envDefault:"1209600"` // 14 days, in seconds
 
 	// email config
 	EmailUsername string `env:"EMAIL_USERNAME" envDefault:"api"`

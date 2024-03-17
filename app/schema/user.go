@@ -14,13 +14,34 @@ type User struct {
 	IsAdmin   bool      `json:"is_admin"`
 	UserName  string    `json:"username"`
 	Email     string    `json:"email"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
+	Name      string    `json:"name"`
 }
 
 type Auth struct {
 	Username string `json:"username" default:"demo"`
 	Password string `json:"password" default:"123456"`
+}
+
+type RegisterUser struct {
+	UserName       string `validate:"required,gte=3,lte=50"`
+	Email          string `validate:"required,email,lte=150"`
+	Password       string `validate:"required,lte=100,gte=8"`
+	Name           string `validate:"required,lte=100"`
+	Phone          string `validate:"required,lte=20"`
+	Address        string `validate:"required,lte=150"`
+	Address2       string `validate:"lte=150"`
+	City           string `validate:"required,lte=100"`
+	State          string `validate:"required,lte=100"`
+	Zip            string `validate:"required,lte=20"`
+	CardType       string `validate:"lte=50"`
+	CardNumber     string `validate:"lte=50"`
+	CardExpiration string `validate:"lte=50"`
+	CardAddress    string `validate:"lte=150"`
+	CardAddress2   string `validate:"lte=150"`
+	CardCity       string `validate:"lte=100"`
+	CardState      string `validate:"lte=100"`
+	CardZip        string `validate:"lte=20"`
+	NeedPromotion  bool
 }
 
 type CreateUser struct {
