@@ -17,7 +17,7 @@ import (
 //	@Tags			User
 //	@Accept			json
 //	@Produce		json
-//	@Success		200				{object}	schema.User
+//	@Success		200				{object}	schema.UserDetail
 //	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/users/me [get]
@@ -36,5 +36,5 @@ func GetUserMe(c *fiber.Ctx) error {
 			"msg": "user not found",
 		})
 	}
-	return c.JSON(convert.To[schema.User](user))
+	return c.JSON(convert.To[schema.UserDetail](user))
 }
