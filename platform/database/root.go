@@ -44,13 +44,12 @@ func CreateDemoUser() error {
 	}
 	password, _ := controller.GeneratePasswordHash([]byte("123456"))
 	user := model.User{
-		IsActive:  true,
-		IsAdmin:   true,
-		UserName:  "demo",
-		Email:     "demo@example.com",
-		Password:  password,
-		FirstName: "first",
-		LastName:  "last",
+		IsActive: true,
+		IsAdmin:  true,
+		UserName: "demo",
+		Email:    "demo@example.com",
+		Password: password,
+		Name:     "Demo User",
 	}
 	// check user already exists
 	result := DB.Where(model.User{Email: user.Email}).
