@@ -229,7 +229,7 @@ func DeleteMovie(c *fiber.Ctx) error {
 	result := db.Delete(&movie)
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": err.Error(),
+			"msg": result.Error,
 		})
 	}
 

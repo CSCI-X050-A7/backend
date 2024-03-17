@@ -225,7 +225,7 @@ func AdminDeleteUser(c *fiber.Ctx) error {
 	result := db.Delete(&user)
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": err.Error(),
+			"msg": result.Error,
 		})
 	}
 
