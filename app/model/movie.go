@@ -24,4 +24,5 @@ type Movie struct {
 	TrailerVideo   string
 	RatingCode     string
 	ShowTime       time.Time
+	CinemaID       uuid.UUID
 }
