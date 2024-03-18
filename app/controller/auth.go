@@ -132,7 +132,7 @@ func Register(c *fiber.Ctx) error {
 	register.Password, _ = GeneratePasswordHash([]byte(register.Password))
 
 	// AES encryption for payment info
-	key := []byte("abc123def456ghi7") // 16 byte key
+	key := []byte(config.Conf.JWTSecret) // 16 byte key
 	register.CardNumber, _ = AESEncrypt(key, register.CardNumber)
 	register.CardType, _ = AESEncrypt(key, register.CardNumber)
 	register.CardExpiration, _ = AESEncrypt(key, register.CardNumber)
