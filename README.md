@@ -12,7 +12,7 @@ For any fiber go application, just clone the repo & rename the application name.
 - [JWT](https://github.com/golang-jwt/jwt)
 - [Swagger docs](https://swagger.io)
 - [Air](https://github.com/cosmtrek/air)
--./bin/code --list-extensions
+- [Swag](https://github.com/swaggo/swag)
 - [golangci-lint](https://golangci-lint.run)
 - [pre-commit](https://pre-commit.com)
 
