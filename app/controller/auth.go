@@ -366,6 +366,13 @@ func ResetPassword(c *fiber.Ctx) error {
 			"msg": "user not found",
 		})
 	}
+
+	if user.PasswordCode == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "password reset code is empty",
+		})
+	}
+
 	if user.PasswordCode != code {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "invalid password reset code",
