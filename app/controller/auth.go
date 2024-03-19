@@ -70,6 +70,13 @@ func Login(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
+	if login.Remember {
+		config.Conf.JWTExpireSeconds = 1209600
+	} else {
+		config.Conf.JWTExpireSeconds = 1
+	}
+	fmt.Println("Remember:%t", login.Remember)
+	fmt.Println("Time:%d", config.Conf.JWTExpireSeconds)
 	c.Cookie(&fiber.Cookie{
 		Name:  "access_token",
 		Value: token,
