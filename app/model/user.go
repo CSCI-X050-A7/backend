@@ -1,6 +1,7 @@
 package model
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,4 +37,26 @@ type User struct {
 	CardState      string
 	CardZip        string
 	NeedPromotion  bool
+}
+
+// generates a random string of specified length
+func GenerateRandomString(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	randomString := make([]byte, length)
+	rand.Seed(time.Now().UnixNano())
+	for i := range randomString {
+		randomString[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(randomString), nil
+}
+
+// UpdatePasswordCode generates a random string and sets it to the PasswordCode field
+func (u *User) UpdatePasswordCode() error {
+	// Generate a random string
+	randomString, err := GenerateRandomString(10)
+	if err != nil {
+		return err
+	}
+	u.PasswordCode = randomString
+	return nil
 }

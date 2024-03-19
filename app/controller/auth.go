@@ -276,3 +276,126 @@ func IsValidPassword(hash, password []byte) bool {
 	err := bcrypt.CompareHashAndPassword(hash, password)
 	return err == nil
 }
+
+// ForgotPassword method for initiating the password reset process.
+//
+//	@Description	Initiate the password reset process.
+//	@Summary		forgot password
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			email	query		string	false	"Email"
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	interface{}				"Ok"
+//	@Router			/api/v1/auth/forgotpassword [post]
+func ForgotPassword(c *fiber.Ctx) error {
+	email := c.Query("email")
+	user := model.User{}
+	err := db.Where(&model.User{Email: email}).First(&user).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "user not found",
+		})
+	}
+
+	// Generate a random password reset code
+	passwordCode, err := generateRandomString(10)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "failed to generate password reset code",
+		})
+	}
+
+	// Update the user's PasswordCode field with the generated code
+	user.PasswordCode = passwordCode
+	if err := db.Save(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "failed to save password reset code",
+		})
+	}
+
+	// Send the password reset link to the user's emai
+	go func() {
+		//err := email.Send(
+		//user.Email,
+		//"Cinema E-Booking System Password Reset",
+		//fmt.Sprintf("Link to reset password: %s/reset-password?id=%s&code=%s",
+		//	config.Conf.Url, user.ID, user.PasswordCode),
+		//)
+		if err != nil {
+			logrus.Errorf("email send error: %v", err)
+		}
+	}()
+
+	return c.JSON(fiber.Map{
+		"msg": "password reset link sent to your email",
+	})
+}
+
+// ResetPassword method for resetting the user's password.
+//
+//	@Description	Reset the user's password.
+//	@Summary		reset password
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		query		string	false	"id"
+//	@Param			code	query		string	false	"code"
+//	@Param			password	body		string	true	"New password"
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	interface{}				"Ok"
+//	@Router			/api/v1/auth/resetpassword [post]
+func ResetPassword(c *fiber.Ctx) error {
+	code := c.Query("code")
+	ID, err := uuid.Parse(c.Query("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	user := model.User{ID: ID}
+	err = db.First(&user).Error
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "user not found",
+		})
+	}
+	if user.PasswordCode != code {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "invalid password reset code",
+		})
+	}
+
+	// Update the user's password with the new password
+	newPassword := c.FormValue("password")
+	hashedPassword, err := GeneratePasswordHash([]byte(newPassword))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "failed to generate password hash",
+		})
+	}
+	user.Password = hashedPassword
+	user.PasswordCode = "" // Clear the password reset code
+	if err := db.Save(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "failed to save new password",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"msg": "password reset successful",
+	})
+}
+
+func generateRandomString(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	for i := 0; i < length; i++ {
+		b[i] = charset[int(b[i])%len(charset)]
+	}
+	return string(b), nil
+}
