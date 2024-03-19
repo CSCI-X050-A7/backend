@@ -315,7 +315,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 	}
 
 	// Send the password reset link to the user's emai
-	go func() {
+	go func() { //Not working in test
 		//err := email.Send(
 		//user.Email,
 		//"Cinema E-Booking System Password Reset",
