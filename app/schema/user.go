@@ -102,3 +102,7 @@ type JWT struct {
 	Admin  bool      `json:"admin"`
 	Exp    int64     `json:"exp"`
 }
+
+type UserResetPassword struct {
+	Password string `json:"password" validate:"required,lte=100,gte=8"`
+}

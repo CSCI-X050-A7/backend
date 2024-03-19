@@ -27,7 +27,7 @@ import (
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			login			body		schema.Auth				true	"Request for token"
+//	@Param			login			body			schema.Auth			true	"Request for token"
 //	@Param			redirect_url	query		string					false	"Redirect url after login"
 //	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200				{object}	schema.TokenResponse	"Ok"
@@ -347,6 +347,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 //	@Param			id		query		string	false	"id"
 //	@Param			code	query		string	false	"code"
 //	@Param			password	body		string	true	"New password"
+//	@Param			resetPassword			body			schema.UserResetPassword true	"Request for token"
 //	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200				{object}	interface{}				"Ok"
 //	@Router			/api/v1/auth/resetpassword [post]
