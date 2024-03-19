@@ -289,9 +289,9 @@ func IsValidPassword(hash, password []byte) bool {
 //	@Success		200				{object}	interface{}				"Ok"
 //	@Router			/api/v1/auth/forgotpassword [post]
 func ForgotPassword(c *fiber.Ctx) error {
-	email := c.Query("email")
+	emailUser := c.Query("email")
 	user := model.User{}
-	err := db.Where(&model.User{Email: email}).First(&user).Error
+	err := db.Where(&model.User{Email: emailUser}).First(&user).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "user not found",
@@ -299,15 +299,20 @@ func ForgotPassword(c *fiber.Ctx) error {
 	}
 
 	// Generate a random password reset code
-	passwordCode, err := generateRandomString(10)
+	val, err := rand.Int(rand.Reader, big.NewInt(100000))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	user.PasswordCode = fmt.Sprintf("%06d", val)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "failed to generate password reset code",
 		})
 	}
-
 	// Update the user's PasswordCode field with the generated code
-	user.PasswordCode = passwordCode
+
 	if err := db.Save(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": "failed to save password reset code",
@@ -315,13 +320,13 @@ func ForgotPassword(c *fiber.Ctx) error {
 	}
 
 	// Send the password reset link to the user's emai
-	go func() { //Not working in test
-		//err := email.Send(
-		//user.Email,
-		//"Cinema E-Booking System Password Reset",
-		//fmt.Sprintf("Link to reset password: %s/reset-password?id=%s&code=%s",
-		//	config.Conf.Url, user.ID, user.PasswordCode),
-		//)
+	go func() { // Not working in test
+		err := email.Send(
+			user.Email,
+			"Cinema E-Booking System Password Reset",
+			fmt.Sprintf("Link to reset password: %s/reset-password?id=%s&code=%s",
+				config.Conf.Url, user.ID, user.PasswordCode),
+		)
 		if err != nil {
 			logrus.Errorf("email send error: %v", err)
 		}
@@ -385,17 +390,4 @@ func ResetPassword(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"msg": "password reset successful",
 	})
-}
-
-func generateRandomString(length int) (string, error) {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, length)
-	_, err := rand.Read(b)
-	if err != nil {
-		return "", err
-	}
-	for i := 0; i < length; i++ {
-		b[i] = charset[int(b[i])%len(charset)]
-	}
-	return string(b), nil
 }
