@@ -8,7 +8,7 @@ all:
 
 clean:
 	rm -rf $(BUILD_DIR)/*
-	rm -rf *.out
+	rm -f *.out
 
 lint:
 	golangci-lint run

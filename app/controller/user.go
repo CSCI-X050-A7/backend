@@ -4,6 +4,7 @@ import (
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
+	"github.com/CSCI-X050-A7/backend/pkg/validator"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 
@@ -37,4 +38,52 @@ func GetUserMe(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(convert.To[schema.UserDetail](user))
+}
+
+func UpdateUser(c *fiber.Ctx) error {
+	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
+	ID, err := uuid.Parse(claims["user_id"].(string))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	user := model.User{ID: ID}
+	err = db.First(&user).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "movie not found",
+		})
+	}
+
+	updateUser := &schema.UpdateUser{}
+	if err := c.BodyParser(updateUser); err != nil {
+		// Return 400 and error message.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+
+	// Create a new validator.
+	validate := validator.NewValidator()
+	if err := validate.Struct(updateUser); err != nil {
+		// Return, if some fields are not valid.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg":    "invalid input found",
+			"errors": validator.ValidatorErrors(err),
+		})
+	}
+
+	if err := convert.Update(&user, &updateUser); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	if err := db.Save(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+
+	return c.JSON(convert.To[schema.UpdateUser](user))
 }
