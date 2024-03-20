@@ -103,3 +103,14 @@ type JWT struct {
 	Admin  bool      `json:"admin"`
 	Exp    int64     `json:"exp"`
 }
+
+type UserResetPassword struct {
+	Username    string `json:"username"`
+	NewPassword string `json:"newPassword"`
+}
+
+type UserChangePassword struct {
+	Username        string `json:"username"`
+	CurrentPassword string `json:"currentPassword"`
+	NewPassword     string `json:"newPassword"`
+}
