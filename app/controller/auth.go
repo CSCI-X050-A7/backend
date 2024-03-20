@@ -324,7 +324,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 		err := email.Send(
 			user.Email,
 			"Cinema E-Booking System Password Reset",
-			fmt.Sprintf("Link to reset password: %s/reset-password?id=%s&code=%s",
+			fmt.Sprintf("Link to reset password: %s/resetPassword?id=%s&code=%s",
 				config.Conf.Url, user.ID, user.PasswordCode),
 		)
 		if err != nil {
@@ -352,50 +352,14 @@ func ForgotPassword(c *fiber.Ctx) error {
 //	@Success		200				{object}	interface{}				"Ok"
 //	@Router			/api/v1/auth/resetpassword [post]
 func ResetPassword(c *fiber.Ctx) error {
-	code := c.Query("code")
-	ID, err := uuid.Parse(c.Query("id"))
-	if err != nil {
+	resetPassword := &schema.UserResetPassword{}
+	if err := c.BodyParser(resetPassword); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
-	user := model.User{ID: ID}
-	err = db.First(&user).Error
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "user not found",
-		})
-	}
 
-	if user.PasswordCode == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "password reset code is empty",
-		})
-	}
+	// Your code logic here
 
-	if user.PasswordCode != code {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "invalid password reset code",
-		})
-	}
-
-	// Update the user's password with the new password
-	newPassword := c.FormValue("password")
-	hashedPassword, err := GeneratePasswordHash([]byte(newPassword))
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": "failed to generate password hash",
-		})
-	}
-	user.Password = hashedPassword
-	user.PasswordCode = "" // Clear the password reset code
-	if err := db.Save(&user).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": "failed to save new password",
-		})
-	}
-
-	return c.JSON(fiber.Map{
-		"msg": "password reset successful",
-	})
+	return nil
 }
