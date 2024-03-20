@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
+	"github.com/CSCI-X050-A7/backend/pkg/config"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -36,5 +37,10 @@ func GetUserMe(c *fiber.Ctx) error {
 			"msg": "user not found",
 		})
 	}
-	return c.JSON(convert.To[schema.UserDetail](user))
+	userDetail := convert.To[schema.UserDetail](user)
+	key := []byte(config.Conf.JWTSecret)
+	userDetail.CardType, _ = AESDecrypt(key, userDetail.CardType)
+	userDetail.CardNumber, _ = AESDecrypt(key, userDetail.CardNumber)
+	userDetail.CardExpiration, _ = AESDecrypt(key, userDetail.CardExpiration)
+	return c.JSON(userDetail)
 }
