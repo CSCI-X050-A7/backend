@@ -27,7 +27,7 @@ import (
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			login			body			schema.Auth			true	"Request for token"
+//	@Param			login			body		schema.Auth 			true	"Request for token"
 //	@Param			redirect_url	query		string					false	"Redirect url after login"
 //	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200				{object}	schema.TokenResponse	"Ok"
