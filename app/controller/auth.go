@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/CSCI-X050-A7/backend/app/model"
@@ -333,7 +334,9 @@ func AESDecrypt(key []byte, plaintext string) (string, error) {
 	cipherText = cipherText[aes.BlockSize:]
 	stream := cipher.NewCFBDecrypter(block, iv)
 	stream.XORKeyStream(cipherText, cipherText)
-	return string(cipherText), nil
+	decrypted := string(cipherText)
+	decrypted = strings.Trim(decrypted, "\u0000")
+	return decrypted, nil
 }
 
 func IsValidPassword(hash, password []byte) bool {
