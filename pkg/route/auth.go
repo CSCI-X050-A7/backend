@@ -14,6 +14,7 @@ func AuthRoutes(a *fiber.App) {
 	route.Post("/activate", controller.Activate)
 	route.Post("/forgotpassword", controller.ForgotPassword) // forgot password
 	route.Post("/resetpassword", controller.ResetPassword)   // reset password
+	route.Post("/changepassword", controller.ChangePassword) // change password
 	routeProtected := route.Group("", middleware.JWTProtected())
 	routeProtected.Post("/logout", controller.Logout)
 	routeProtected.Post("/jwt", controller.JWT)

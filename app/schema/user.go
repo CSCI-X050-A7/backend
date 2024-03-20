@@ -106,3 +106,9 @@ type JWT struct {
 type UserResetPassword struct {
 	Password string `json:"password" validate:"required,lte=100,gte=8"`
 }
+
+type UserChangePassword struct {
+	Username        string `json:"username"`
+	CurrentPassword string `json:"currentPassword"`
+	NewPassword     string `json:"newPassword"`
+}

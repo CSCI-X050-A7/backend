@@ -359,7 +359,60 @@ func ResetPassword(c *fiber.Ctx) error {
 		})
 	}
 
-	// Your code logic here
-
 	return nil
+}
+
+// ChangePassword method for changing the user's password.
+//
+//	@Description	Change the user's password.
+//	@Summary		change password
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			username	body		string	true	"Username"
+//	@Param			currentPassword	body	string	true	"Current password"
+//	@Param			newPassword	body		string	true	"New password"
+//	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200				{object}	schema.UserChangePassword	"Ok"				"Ok"
+//	@Router			/api/v1/auth/changepassword [post]
+func ChangePassword(c *fiber.Ctx) error {
+	changePassword := &schema.UserChangePassword{}
+	if err := c.BodyParser(changePassword); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	user := model.User{}
+	err := db.Where(&model.User{UserName: changePassword.Username}).First(&user).Error
+	logrus.Infof("user: %v", user)
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "username not found",
+		})
+	}
+
+	if bcrypt.CompareHashAndPassword([]byte(user.Password),
+		[]byte(changePassword.CurrentPassword)) != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"msg": "password is wrong",
+		})
+	}
+	// Update the user's password in the database
+	newPasswordHash, err := GeneratePasswordHash([]byte(changePassword.NewPassword))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "failed to generate password hash",
+		})
+	}
+	user.Password = newPasswordHash
+	if err := db.Save(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": "failed to update password",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"msg": "password changed successfully",
+	})
 }
