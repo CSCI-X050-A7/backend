@@ -344,7 +344,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			newPassword	body		string	true	"New password"
+//	@Param			resetPassword			body		schema.UserResetPassword	true	"Reset password"
 //	@Param			redirect_url	query		string					false	"Redirect url after login"
 //	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200				{object}	schema.UserResetPassword 	"Ok" 				"Ok"
@@ -393,7 +393,7 @@ func ResetPassword(c *fiber.Ctx) error {
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			username	body		string	true	"Username"
+//	@Param			changePassword			body		schema.UserChangePassword	true	"Change password"
 //	@Param			redirect_url	query		string					false	"Redirect url after login"
 //	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200				{object}	schema.UserChangePassword	"Ok"				"Ok"
