@@ -1,9 +1,14 @@
 package controller
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
 	"crypto/rand"
+	"encoding/base64"
 	"fmt"
+	"io"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/CSCI-X050-A7/backend/app/model"
@@ -62,8 +67,15 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
+	var timeToExpire int64
+	if login.Remember {
+		timeToExpire = config.Conf.JWTExpireSeconds // 14 days
+	} else {
+		timeToExpire = 3600 // 1 hour
+	}
+
 	// Generate a new Access token.
-	token, err := GenerateNewAccessToken(user.ID, user.IsAdmin)
+	token, err := GenerateNewAccessToken(user.ID, user.IsAdmin, timeToExpire)
 	if err != nil {
 		// Return 500 and token generation error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -74,13 +86,13 @@ func Login(c *fiber.Ctx) error {
 		Name:  "access_token",
 		Value: token,
 		Expires: time.Now().
-			Add(time.Duration(config.Conf.JWTExpireSeconds) * time.Second),
+			Add(time.Duration(timeToExpire) * time.Second),
 		HTTPOnly: true,
 		SameSite: "lax",
 	})
 	return c.JSON(fiber.Map{
 		"msg": fmt.Sprintf("Token will be expired within %d seconds",
-			config.Conf.JWTExpireSeconds),
+			timeToExpire),
 		"access_token": token,
 		"redirect_url": redirect_url,
 	})
@@ -124,7 +136,15 @@ func Register(c *fiber.Ctx) error {
 			"msg": "user with this username or email already exists",
 		})
 	}
+	// bcrypt encryption for password
 	register.Password, _ = GeneratePasswordHash([]byte(register.Password))
+
+	// AES encryption for payment info
+	key := []byte(config.Conf.JWTSecret)
+	register.CardNumber, _ = AESEncrypt(key, register.CardNumber)
+	register.CardType, _ = AESEncrypt(key, register.CardType)
+	register.CardExpiration, _ = AESEncrypt(key, register.CardExpiration)
+
 	newUser := model.User{}
 	if err := convert.Update(&newUser, &register); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -242,7 +262,7 @@ func JWT(c *fiber.Ctx) error {
 	return c.JSON(claims)
 }
 
-func GenerateNewAccessToken(userID uuid.UUID, isAdmin bool) (string, error) {
+func GenerateNewAccessToken(userID uuid.UUID, isAdmin bool, timeToExpire int64) (string, error) {
 	// Create token
 	token := jwt.New(jwt.SigningMethodHS256)
 
@@ -250,7 +270,7 @@ func GenerateNewAccessToken(userID uuid.UUID, isAdmin bool) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["user_id"] = userID
 	claims["admin"] = isAdmin
-	claims["exp"] = time.Now().Add(time.Duration(config.Conf.JWTExpireSeconds) *
+	claims["exp"] = time.Now().Add(time.Duration(timeToExpire) *
 		time.Second).Unix()
 
 	// Generate encoded token and send it as response.
@@ -270,6 +290,60 @@ func GeneratePasswordHash(password []byte) (string, error) {
 	}
 
 	return string(hashedPassword), nil
+}
+
+func AESEncrypt(key []byte, plaintext string) (string, error) {
+	truncateKey := make([]byte, 16)
+	copy(truncateKey, key)
+	var byteString []byte
+	if len(plaintext) < 16 {
+		paddedTxt := make([]byte, 16)
+		copy(paddedTxt, plaintext)
+		byteString = []byte(paddedTxt)
+	} else {
+		byteString = []byte(plaintext)
+	}
+	block, err := aes.NewCipher(truncateKey)
+	// err: cipher cannot be created
+	if err != nil {
+		return "", err
+	}
+	cipherText := make([]byte, aes.BlockSize+len(byteString))
+	iv := cipherText[:aes.BlockSize] // extends to blocksize
+	// err: can't encrypt
+	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
+		return "", err
+	}
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(cipherText[aes.BlockSize:], byteString)
+	return base64.StdEncoding.EncodeToString(cipherText), nil
+}
+
+func AESDecrypt(key []byte, plaintext string) (string, error) {
+	cipherText, err := base64.StdEncoding.DecodeString(plaintext)
+	// err: cannot base64 decode
+	if err != nil {
+		return "", err
+	}
+
+	truncateKey := make([]byte, 16)
+	copy(truncateKey, key)
+	block, err := aes.NewCipher(truncateKey)
+	// err: cannot make new cipher
+	if err != nil {
+		return "", err
+	}
+	// err: ciphertext block size is wrong
+	if len(cipherText) < aes.BlockSize {
+		return "", fmt.Errorf("ciphertext wrong block size")
+	}
+	iv := cipherText[:aes.BlockSize]
+	cipherText = cipherText[aes.BlockSize:]
+	stream := cipher.NewCFBDecrypter(block, iv)
+	stream.XORKeyStream(cipherText, cipherText)
+	decrypted := string(cipherText)
+	decrypted = strings.Trim(decrypted, "\u0000")
+	return decrypted, nil
 }
 
 func IsValidPassword(hash, password []byte) bool {
