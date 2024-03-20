@@ -95,6 +95,7 @@ type UserListResponse = ListResponse[User]
 type Auth struct {
 	Username string `json:"username" default:"demo"`
 	Password string `json:"password" default:"123456"`
+	Remember bool   `json:"remember" default:"false"`
 }
 
 type JWT struct {

@@ -62,8 +62,15 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
+	var timeToExpire int64
+	if login.Remember {
+		timeToExpire = config.Conf.JWTExpireSeconds // 14 days
+	} else {
+		timeToExpire = 3600 // 1 hour
+	}
+
 	// Generate a new Access token.
-	token, err := GenerateNewAccessToken(user.ID, user.IsAdmin)
+	token, err := GenerateNewAccessToken(user.ID, user.IsAdmin, timeToExpire)
 	if err != nil {
 		// Return 500 and token generation error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -74,13 +81,13 @@ func Login(c *fiber.Ctx) error {
 		Name:  "access_token",
 		Value: token,
 		Expires: time.Now().
-			Add(time.Duration(config.Conf.JWTExpireSeconds) * time.Second),
+			Add(time.Duration(timeToExpire) * time.Second),
 		HTTPOnly: true,
 		SameSite: "lax",
 	})
 	return c.JSON(fiber.Map{
 		"msg": fmt.Sprintf("Token will be expired within %d seconds",
-			config.Conf.JWTExpireSeconds),
+			timeToExpire),
 		"access_token": token,
 		"redirect_url": redirect_url,
 	})
@@ -242,7 +249,7 @@ func JWT(c *fiber.Ctx) error {
 	return c.JSON(claims)
 }
 
-func GenerateNewAccessToken(userID uuid.UUID, isAdmin bool) (string, error) {
+func GenerateNewAccessToken(userID uuid.UUID, isAdmin bool, timeToExpire int64) (string, error) {
 	// Create token
 	token := jwt.New(jwt.SigningMethodHS256)
 
@@ -250,7 +257,7 @@ func GenerateNewAccessToken(userID uuid.UUID, isAdmin bool) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["user_id"] = userID
 	claims["admin"] = isAdmin
-	claims["exp"] = time.Now().Add(time.Duration(config.Conf.JWTExpireSeconds) *
+	claims["exp"] = time.Now().Add(time.Duration(timeToExpire) *
 		time.Second).Unix()
 
 	// Generate encoded token and send it as response.
