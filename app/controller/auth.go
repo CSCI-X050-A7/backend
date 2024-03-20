@@ -132,7 +132,7 @@ func Register(c *fiber.Ctx) error {
 	register.Password, _ = GeneratePasswordHash([]byte(register.Password))
 
 	// AES encryption for payment info
-	key := []byte(config.Conf.JWTSecret) // 16 byte key
+	key := []byte(config.Conf.JWTSecret)
 	register.CardNumber, _ = AESEncrypt(key, register.CardNumber)
 	register.CardType, _ = AESEncrypt(key, register.CardNumber)
 	register.CardExpiration, _ = AESEncrypt(key, register.CardNumber)
@@ -285,8 +285,17 @@ func GeneratePasswordHash(password []byte) (string, error) {
 }
 
 func AESEncrypt(key []byte, plaintext string) (string, error) {
-	byteString := []byte(plaintext)
-	block, err := aes.NewCipher(key)
+	truncateKey := make([]byte, 16)
+	copy(truncateKey, key)
+	var byteString []byte
+	if len(plaintext) < 16 {
+		paddedTxt := make([]byte, 16)
+		copy(paddedTxt, plaintext)
+		byteString = []byte(paddedTxt)
+	} else {
+		byteString = []byte(plaintext)
+	}
+	block, err := aes.NewCipher(truncateKey)
 	// err: cipher cannot be created
 	if err != nil {
 		return "", err
@@ -308,7 +317,10 @@ func AESDecrypt(key []byte, plaintext string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	block, err := aes.NewCipher(key)
+
+	truncateKey := make([]byte, 16)
+	copy(truncateKey, key)
+	block, err := aes.NewCipher(truncateKey)
 	// err: cannot make new cipher
 	if err != nil {
 		return "", err
@@ -321,7 +333,6 @@ func AESDecrypt(key []byte, plaintext string) (string, error) {
 	cipherText = cipherText[aes.BlockSize:]
 	stream := cipher.NewCFBDecrypter(block, iv)
 	stream.XORKeyStream(cipherText, cipherText)
-
 	return string(cipherText), nil
 }
 
