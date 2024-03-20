@@ -64,7 +64,7 @@ func Login(c *fiber.Ctx) error {
 
 	var timeToExpire int64
 	if login.Remember {
-		timeToExpire = 1209600 // 14 days
+		timeToExpire = config.Conf.JWTExpireSeconds // 14 days
 	} else {
 		timeToExpire = 3600 // 1 hour
 	}
