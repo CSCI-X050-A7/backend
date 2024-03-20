@@ -42,29 +42,5 @@ func GetUserMe(c *fiber.Ctx) error {
 	userDetail.CardType, _ = AESDecrypt(key, userDetail.CardType)
 	userDetail.CardNumber, _ = AESDecrypt(key, userDetail.CardNumber)
 	userDetail.CardExpiration, _ = AESDecrypt(key, userDetail.CardExpiration)
-
-	/* For easy debugging:
-	var str1, str2, str3 string
-	var err1, err2, err3 error
-	str1 = "American Express"
-	str2 = "thisismycardnumber"
-	str3 = "exp"
-	str1, err4 = AESEncrypt(key, str1)
-	str2, err5 = AESEncrypt(key, str2)
-	str3, err6 = AESEncrypt(key, str3)
-	fmt.Println("\n\n\nAfter encrypt")
-	fmt.Printf("%v, %v, %v\n", err1, err2, err3)
-	fmt.Printf("%s, %s, %s", str1, str2, str3)
-	fmt.Println("\n\n\n")
-	str1, err4 = AESDecrypt(key, str1)
-	str2, err5 = AESDecrypt(key, str2)
-	str3, err6 = AESDecrypt(key, str3)
-
-	fmt.Println("\n\n\nAfter decrypt")
-	fmt.Printf("%v, %v, %v", err1, err2, err3)
-	fmt.Printf("%s, %s, %s", str1, str2, str3)
-	fmt.Println("\n\n\n")
-	*/
-
 	return c.JSON(userDetail)
 }

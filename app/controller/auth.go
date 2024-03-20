@@ -134,8 +134,8 @@ func Register(c *fiber.Ctx) error {
 	// AES encryption for payment info
 	key := []byte(config.Conf.JWTSecret)
 	register.CardNumber, _ = AESEncrypt(key, register.CardNumber)
-	register.CardType, _ = AESEncrypt(key, register.CardNumber)
-	register.CardExpiration, _ = AESEncrypt(key, register.CardNumber)
+	register.CardType, _ = AESEncrypt(key, register.CardType)
+	register.CardExpiration, _ = AESEncrypt(key, register.CardExpiration)
 
 	newUser := model.User{}
 	if err := convert.Update(&newUser, &register); err != nil {
