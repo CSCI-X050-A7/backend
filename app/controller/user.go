@@ -4,9 +4,11 @@ import (
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
+	"github.com/CSCI-X050-A7/backend/pkg/email"
 	"github.com/CSCI-X050-A7/backend/pkg/validator"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -47,6 +49,7 @@ func GetUserMe(c *fiber.Ctx) error {
 //	@Tags			User
 //	@Accept			json
 //	@Produce		json
+//	@Param			userUpdate		body		schema.UpdateUser		true	"Update user info"
 //	@Success		200				{object}	schema.UserDetail
 //	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKey
@@ -95,6 +98,15 @@ func UpdateUser(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
-
+	go func() {
+		err := email.Send(
+			user.Email,
+			"Cinema E-Booking System - User Profile Updated",
+			"This is just an email notifiation to make you aware that your profile has successfully been updated.",
+		)
+		if err != nil {
+			logrus.Errorf("email send error: %v", err)
+		}
+	}()
 	return c.JSON(convert.To[schema.UpdateUser](user))
 }

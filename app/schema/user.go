@@ -38,16 +38,16 @@ type UserDetail struct {
 }
 
 type RegisterUser struct {
-	UserName       string `json:"username" validate:"required,gte=3,lte=50"`
-	Email          string `json:"email" validate:"required,email,lte=150"`
-	Password       string `json:"password" validate:"required,lte=100,gte=8"`
-	Name           string `json:"name" validate:"required,lte=100"`
-	Phone          string `json:"phone" validate:"required,lte=20"`
-	Address        string `json:"address" validate:"required,lte=150"`
+	UserName       string `json:"username" validate:"gte=3,lte=50"`
+	Email          string `json:"email" validate:"email,lte=150"`
+	Password       string `json:"password" validate:"lte=100,gte=8"`
+	Name           string `json:"name" validate:"lte=100"`
+	Phone          string `json:"phone" validate:"lte=20"`
+	Address        string `json:"address" validate:"lte=150"`
 	Address2       string `json:"address2" validate:"lte=150"`
-	City           string `json:"city" validate:"required,lte=100"`
-	State          string `json:"state" validate:"required,lte=100"`
-	Zip            string `json:"zip" validate:"required,lte=20"`
+	City           string `json:"city" validate:"lte=100"`
+	State          string `json:"state" validate:"lte=100"`
+	Zip            string `json:"zip" validate:"lte=20"`
 	CardType       string `json:"card_type" validate:"lte=50"`
 	CardNumber     string `json:"card_number" validate:"lte=50"`
 	CardExpiration string `json:"card_expiration" validate:"lte=50"`
@@ -60,15 +60,14 @@ type RegisterUser struct {
 }
 
 type UpdateUser struct {
-	UserName       string `json:"username" validate:"required,gte=3,lte=50"`
-	Password       string `json:"password" validate:"required,lte=100,gte=8"`
-	Name           string `json:"name" validate:"required,lte=100"`
-	Phone          string `json:"phone" validate:"required,lte=20"`
-	Address        string `json:"address" validate:"required,lte=150"`
+	UserName       string `json:"username" validate:"gte=3,lte=50"`
+	Name           string `json:"name" validate:"lte=100"`
+	Phone          string `json:"phone" validate:"lte=20"`
+	Address        string `json:"address" validate:"lte=150"`
 	Address2       string `json:"address2" validate:"lte=150"`
-	City           string `json:"city" validate:"required,lte=100"`
-	State          string `json:"state" validate:"required,lte=100"`
-	Zip            string `json:"zip" validate:"required,lte=20"`
+	City           string `json:"city" validate:"lte=100"`
+	State          string `json:"state" validate:"lte=100"`
+	Zip            string `json:"zip" validate:"lte=20"`
 	CardType       string `json:"card_type" validate:"lte=50"`
 	CardNumber     string `json:"card_number" validate:"lte=50"`
 	CardExpiration string `json:"card_expiration" validate:"lte=50"`
@@ -83,11 +82,11 @@ type UpdateUser struct {
 type CreateUser struct {
 	IsAdmin  bool   `json:"is_admin"`
 	IsActive bool   `json:"is_active"`
-	UserName string `json:"username" validate:"required,gte=3,lte=50"`
-	Email    string `json:"email" validate:"required,email,lte=150"`
-	Password string `json:"password" validate:"required,lte=100,gte=8"`
-	Name     string `json:"name" validate:"required,lte=100"`
-	Phone    string `json:"phone" validate:"required,lte=20"`
+	UserName string `json:"username" validate:"gte=3,lte=50"`
+	Email    string `json:"email" validate:"email,lte=150"`
+	Password string `json:"password" validate:"lte=100,gte=8"`
+	Name     string `json:"name" validate:"lte=100"`
+	Phone    string `json:"phone" validate:"lte=20"`
 }
 
 type UserListResponse = ListResponse[User]
