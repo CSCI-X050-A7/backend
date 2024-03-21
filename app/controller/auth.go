@@ -226,7 +226,7 @@ func Activate(c *fiber.Ctx) error {
 // Logout method.
 //
 //	@Description	Clean cookies
-//	@Summary		Logout
+//	@Summary		logout
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
