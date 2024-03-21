@@ -49,7 +49,7 @@ func GetUserMe(c *fiber.Ctx) error {
 //	@Produce		json
 //	@Success		200				{object}	schema.UserDetail
 //	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
-//	@Security		ApiKeyAuth
+//	@Security		ApiKey
 //	@Router			/api/v1/users/me [put]
 func UpdateUser(c *fiber.Ctx) error {
 	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
