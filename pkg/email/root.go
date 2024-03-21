@@ -5,6 +5,7 @@ import (
 	"net/smtp"
 
 	"github.com/CSCI-X050-A7/backend/pkg/config"
+	"github.com/sirupsen/logrus"
 )
 
 func Send(to string, subject string, content string) error {
@@ -20,6 +21,7 @@ func Send(to string, subject string, content string) error {
 		"To: %s\r\nFrom: %s\r\nSubject: %s\r\n\r\n%s\r\n",
 		to, from, subject, content,
 	))
+	logrus.Infof("email sent to %s", to)
 	err := smtp.SendMail(smtpUrl, auth, from, toSlice, message)
 	return err
 }

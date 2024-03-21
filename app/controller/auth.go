@@ -380,11 +380,6 @@ func ForgotPassword(c *fiber.Ctx) error {
 		})
 	}
 	user.PasswordCode = fmt.Sprintf("%06d", val)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": "failed to generate password reset code",
-		})
-	}
 	// Update the user's PasswordCode field with the generated code
 
 	if err := db.Save(&user).Error; err != nil {

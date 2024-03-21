@@ -61,7 +61,6 @@ type RegisterUser struct {
 
 type UpdateUser struct {
 	UserName       string `json:"username" validate:"required,gte=3,lte=50"`
-	Password       string `json:"password" validate:"required,lte=100,gte=8"`
 	Name           string `json:"name" validate:"required,lte=100"`
 	Phone          string `json:"phone" validate:"required,lte=20"`
 	Address        string `json:"address" validate:"required,lte=150"`
