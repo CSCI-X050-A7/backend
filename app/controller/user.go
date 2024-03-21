@@ -40,6 +40,17 @@ func GetUserMe(c *fiber.Ctx) error {
 	return c.JSON(convert.To[schema.UserDetail](user))
 }
 
+// UpdateUser update user information.
+//
+//	@Description	update user info.
+//	@Summary		update user info.
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Success		200				{object}	schema.UserDetail
+//	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/users/me [put]
 func UpdateUser(c *fiber.Ctx) error {
 	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
 	ID, err := uuid.Parse(claims["user_id"].(string))
@@ -52,7 +63,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	err = db.First(&user).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "movie not found",
+			"msg": "user not found",
 		})
 	}
 
