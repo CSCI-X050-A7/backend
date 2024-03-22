@@ -184,10 +184,10 @@ func Register(c *fiber.Ctx) error {
 //	@Tags			Auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		query		string	false	"id"
-//	@Param			code	query		string	false	"code"
+//	@Param			id		query		string	true	"id"
+//	@Param			code	query		string	true	"code"
 //	@Failure		400,404,401,500	{object}	schema.ErrorResponse	"Error"
-//	@Success		200				{object}	schema.User	"Ok"
+//	@Success		200				{object}	interface{}				"Ok"
 //	@Router			/api/v1/auth/activate [post]
 func Activate(c *fiber.Ctx) error {
 	code := c.Query("code")
@@ -220,7 +220,7 @@ func Activate(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
-	return c.JSON(convert.To[schema.User](user))
+	return c.JSON(fiber.Map{})
 }
 
 // Logout method.
