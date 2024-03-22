@@ -54,7 +54,7 @@ func GetUserMe(c *fiber.Ctx) error {
 // UpdateUser update user information.
 //
 //	@Description	update user info.
-//	@Summary		update user info.
+//	@Summary		update user info
 //	@Tags			User
 //	@Accept			json
 //	@Produce		json
