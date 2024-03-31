@@ -42,12 +42,12 @@ type RegisterUser struct {
 	Email          string `json:"email" validate:"required,email,lte=150"`
 	Password       string `json:"password" validate:"required,lte=100,gte=8"`
 	Name           string `json:"name" validate:"required,lte=100"`
-	Phone          string `json:"phone" validate:"required,lte=20"`
+	Phone          string `json:"phone" validate:"required,number,eq=10"`
 	Address        string `json:"address" validate:"required,lte=150"`
 	Address2       string `json:"address2" validate:"lte=150"`
 	City           string `json:"city" validate:"required,lte=100"`
 	State          string `json:"state" validate:"required,lte=100"`
-	Zip            string `json:"zip" validate:"required,lte=20"`
+	Zip            string `json:"zip" validate:"required,number,eq=5"`
 	CardType       string `json:"card_type" validate:"lte=50"`
 	CardNumber     string `json:"card_number" validate:"lte=50"`
 	CardExpiration string `json:"card_expiration" validate:"lte=50"`
@@ -55,7 +55,7 @@ type RegisterUser struct {
 	CardAddress2   string `json:"card_address2" validate:"lte=150"`
 	CardCity       string `json:"card_city" validate:"lte=100"`
 	CardState      string `json:"card_state" validate:"lte=100"`
-	CardZip        string `json:"card_zip" validate:"lte=20"`
+	CardZip        string `json:"card_zip" validate:"number,eq=5"`
 	NeedPromotion  bool   `json:"need_promotion"`
 }
 
