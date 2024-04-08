@@ -127,3 +127,33 @@ func UpdateUserMe(c *fiber.Ctx) error {
 
 	return c.JSON(convert.To[schema.UpdateUser](user))
 }
+
+// GetOrders func get user's history orders.
+//
+//	@Description	a user's orders.
+//	@Summary		get a user's orders
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Success		200				{object}	schema.OrderListResponse
+//	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/users/orders [get]
+func GetOrders(c *fiber.Ctx) error {
+	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
+	ID, err := uuid.Parse(claims["user_id"].(string))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	user := model.User{ID: ID}
+	err = db.First(&user).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "user not found",
+		})
+	}
+	// TODO: get orders
+	return c.JSON(fiber.Map{})
+}

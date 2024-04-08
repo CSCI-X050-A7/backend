@@ -11,4 +11,5 @@ func UserRoutes(a *fiber.App) {
 	routeProtected := a.Group("/api/v1/users", middleware.JWTProtected())
 	routeProtected.Get("/me", controller.GetUserMe)
 	routeProtected.Put("/me", controller.UpdateUserMe)
+	routeProtected.Get("/orders", controller.GetOrders)
 }
