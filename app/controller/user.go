@@ -4,14 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/config"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
 	"github.com/CSCI-X050-A7/backend/pkg/email"
 	"github.com/CSCI-X050-A7/backend/pkg/validator"
-	jwt "github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,19 +26,9 @@ import (
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/users/me [get]
 func GetUserMe(c *fiber.Ctx) error {
-	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
-	ID, err := uuid.Parse(claims["user_id"].(string))
+	user, err := GetJWTUser(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": err.Error(),
-		})
-	}
-	user := model.User{ID: ID}
-	err = db.First(&user).Error
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "user not found",
-		})
+		return err
 	}
 	userDetail := convert.To[schema.UserDetail](user)
 	key := []byte(config.Conf.JWTSecret)
@@ -64,19 +51,9 @@ func GetUserMe(c *fiber.Ctx) error {
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/users/me [put]
 func UpdateUserMe(c *fiber.Ctx) error {
-	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
-	ID, err := uuid.Parse(claims["user_id"].(string))
+	user, err := GetJWTUser(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": err.Error(),
-		})
-	}
-	user := model.User{ID: ID}
-	err = db.First(&user).Error
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "user not found",
-		})
+		return err
 	}
 
 	updateUser := &schema.UpdateUser{}
@@ -140,20 +117,11 @@ func UpdateUserMe(c *fiber.Ctx) error {
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/users/orders [get]
 func GetOrders(c *fiber.Ctx) error {
-	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
-	ID, err := uuid.Parse(claims["user_id"].(string))
+	user, err := GetJWTUser(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": err.Error(),
-		})
+		return err
 	}
-	user := model.User{ID: ID}
-	err = db.First(&user).Error
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "user not found",
-		})
-	}
+	logrus.Debugf("user: %v", user) // TODO: remove me
 	// TODO: get orders
 	return c.JSON(fiber.Map{})
 }

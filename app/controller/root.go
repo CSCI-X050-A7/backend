@@ -4,7 +4,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
+	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -87,4 +90,23 @@ func Paginate(pagination schema.Pagination) func(db *gorm.DB) *gorm.DB {
 		}
 		return statement
 	}
+}
+
+func GetJWTUser(c *fiber.Ctx) (user model.User, err error) {
+	claims := c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)
+	ID, err := uuid.Parse(claims["user_id"].(string))
+	if err != nil {
+		err = c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+		return
+	}
+	user.ID = ID
+	if db.First(&user).Error != nil {
+		err = c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "user not found",
+		})
+		return
+	}
+	return
 }
