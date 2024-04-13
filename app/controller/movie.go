@@ -16,18 +16,19 @@ import (
 
 // GetMovies func gets all movies.
 //
-//	@Description	Get all movies.
-//	@Summary		get all movies
-//	@Tags			Movie
-//	@Accept			json
-//	@Produce		json
-//	@Param			offset	query		integer	false	"offset"
-//	@Param			limit	query		integer	false	"limit"
-//	@Param			search	query		string	false	"search by title"
-//	@Param			running	query		bool	false	"the movie is running or not"
-//	@Success		200		{object}	schema.MovieListResponse
-//	@Failure		400		{object}	schema.ErrorResponse	"Error"
-//	@Router			/api/v1/movies [get]
+//		@Description	Get all movies.
+//		@Summary		get all movies
+//		@Tags			Movie
+//		@Accept			json
+//		@Produce		json
+//		@Param			offset	query		integer	false	"offset"
+//		@Param			limit	query		integer	false	"limit"
+//		@Param			search	query		string	false	"search by title"
+//		@Param			running	query		bool	false	"the movie is running or not"
+//	    @Param          category query      string  false   "filter by category"
+//		@Success		200		{object}	schema.MovieListResponse
+//		@Failure		400		{object}	schema.ErrorResponse	"Error"
+//		@Router			/api/v1/movies [get]
 func GetMovies(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
 	showTimeQuery := "show_time > ?"
@@ -36,6 +37,7 @@ func GetMovies(c *fiber.Ctx) error {
 		showTimeQuery = "show_time < ?"
 	}
 	search := c.Query("search", "")
+	category := c.Query("category", "")
 	statement := db.Model(model.Movie{})
 	if runningQuery != "" {
 		statement = statement.Where(showTimeQuery, time.Now())
@@ -43,6 +45,10 @@ func GetMovies(c *fiber.Ctx) error {
 	if search != "" {
 		statement = statement.
 			Where("LOWER(title) LIKE ?", fmt.Sprintf("%%%s%%", search))
+	}
+	if category != "" {
+		statement = statement.
+			Where("category = ?", category)
 	}
 	objs, count, err := ListObjs[schema.Movie](
 		statement,
