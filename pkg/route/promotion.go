@@ -12,5 +12,5 @@ func PromoRoutes(a *fiber.App) {
 	routeProtectedAdmin := route.Group("", middleware.JWTProtected(), middleware.IsAdmin)
 	routeProtectedAdmin.Post("/", controller.CreatePromo)
 	routeProtectedAdmin.Put("/:id", controller.UpdatePromo)
-	//routeProtectedAdmin.Delete("/:id", controller.DeletePromo)
+	// routeProtectedAdmin.Delete("/:id", controller.DeletePromo)
 }
