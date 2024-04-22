@@ -40,6 +40,7 @@ func Serve() {
 	route.TicketRoutes(app)
 	route.NotFoundRoute(app)
 	route.CardRoutes(app)
+	route.OrderRoutes(app)
 
 	// signal channel to capture system calls
 	sigCh := make(chan os.Signal, 1)
