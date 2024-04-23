@@ -19,13 +19,13 @@ import (
 //	@Produce		json
 //	@Param			offset		query		integer	false	"offset"
 //	@Param			limit		query		integer	false	"limit"
-//	@Success		200			{object}	schema.UserListResponse
+//	@Success		200			{object}	schema.UserDetailListResponse
 //	@Failure		400,401,403	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/admin/users [get]
 func AdminGetUsers(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
-	objs, count, err := ListObjs[schema.User](
+	objs, count, err := ListObjs[schema.UserDetail](
 		db.Model(model.User{}), pagination,
 	)
 	if err != nil {
@@ -49,7 +49,7 @@ func AdminGetUsers(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id				path		string	true	"User ID"
-//	@Success		200				{object}	schema.User
+//	@Success		200				{object}	schema.UserDetail
 //	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/admin/users/{id} [get]
@@ -67,7 +67,7 @@ func AdminGetUser(c *fiber.Ctx) error {
 			"msg": "user not found",
 		})
 	}
-	return c.JSON(convert.To[schema.User](user))
+	return c.JSON(convert.To[schema.UserDetail](user))
 }
 
 // CreateUser func for creates a new user.
@@ -141,7 +141,7 @@ func AdminCreateUser(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id					path		string				true	"User ID"
-//	@Param			updateuser			body		schema.UpdateUser	true	"Update a user"
+//	@Param			updateuser			body		schema.AdminUpdateUser	true	"Update a user"
 //	@Success		200					{object}	schema.User
 //	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
@@ -161,7 +161,7 @@ func AdminUpdateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	updateUser := &schema.UpdateUser{}
+	updateUser := &schema.AdminUpdateUser{}
 	if err := c.BodyParser(updateUser); err != nil {
 		// Return 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

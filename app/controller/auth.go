@@ -204,7 +204,7 @@ func Activate(c *fiber.Ctx) error {
 			"msg": "user not found",
 		})
 	}
-	if user.IsActive {
+	if user.IsActive || user.ActivationCode == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "user already activated",
 		})
@@ -215,6 +215,7 @@ func Activate(c *fiber.Ctx) error {
 		})
 	}
 	user.IsActive = true
+	user.ActivationCode = ""
 	if err := db.Save(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
