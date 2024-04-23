@@ -34,6 +34,7 @@ func Serve() {
 	route.AdminRoutes(app)
 	route.AuthRoutes(app)
 	route.MovieRoutes(app)
+	route.PromoRoutes(app)
 	route.UserRoutes(app)
 	route.MiscRoutes(app)
 	route.NotFoundRoute(app)
