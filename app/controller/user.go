@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/CSCI-X050-A7/backend/app/schema"
-	"github.com/CSCI-X050-A7/backend/pkg/config"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
 	"github.com/CSCI-X050-A7/backend/pkg/email"
 	"github.com/CSCI-X050-A7/backend/pkg/validator"
@@ -31,10 +30,6 @@ func GetUserMe(c *fiber.Ctx) error {
 		return err
 	}
 	userDetail := convert.To[schema.UserDetail](user)
-	key := []byte(config.Conf.JWTSecret)
-	userDetail.CardType, _ = AESDecrypt(key, userDetail.CardType)
-	userDetail.CardNumber, _ = AESDecrypt(key, userDetail.CardNumber)
-	userDetail.CardExpiration, _ = AESDecrypt(key, userDetail.CardExpiration)
 	return c.JSON(userDetail)
 }
 
@@ -73,11 +68,6 @@ func UpdateUserMe(c *fiber.Ctx) error {
 			"errors": validator.ValidatorErrors(err),
 		})
 	}
-	// AES encryption for payment info
-	key := []byte(config.Conf.JWTSecret)
-	updateUser.CardNumber, _ = AESEncrypt(key, updateUser.CardNumber)
-	updateUser.CardType, _ = AESEncrypt(key, updateUser.CardType)
-	updateUser.CardExpiration, _ = AESEncrypt(key, updateUser.CardExpiration)
 	if err := convert.Update(&user, &updateUser); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
