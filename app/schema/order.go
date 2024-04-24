@@ -1,10 +1,24 @@
 package schema
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
+// Show struct to describe movie object.
 type Order struct {
-	ID    uuid.UUID `json:"id" validate:"required"`
-	Field string    `json:"field" validate:"required"`
+	ID           uuid.UUID `json:"id" validate:"required"`
+	TicketsArray string    `json:"tickets_array" validate:"required,lte=255"`
+	Promotion    string    `json:"promotion" validate:"required,lte=255"`
+	Show         Show      `json:"show" validate:"required,lte=255"`
+	Card         string    `json:"card" validate:"required,lte=255"`
+}
+
+// Show struct to describe movie object.
+type UpsertOrder struct {
+	TicketsArray string `json:"tickets_array" validate:"required,lte=255"`
+	Promotion    string `json:"promotion" validate:"required,lte=255"`
+	Show         Show   `json:"show" validate:"required,lte=255"`
+	Card         string `json:"card" validate:"required,lte=255"`
 }
 
 type OrderListResponse = ListResponse[Order]
