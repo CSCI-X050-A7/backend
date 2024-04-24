@@ -119,24 +119,3 @@ func UpdateUserMe(c *fiber.Ctx) error {
 
 	return c.JSON(convert.To[schema.UserDetail](user))
 }
-
-// GetOrders func get user's history orders.
-//
-//	@Description	a user's orders.
-//	@Summary		get a user's orders
-//	@Tags			User
-//	@Accept			json
-//	@Produce		json
-//	@Success		200				{object}	schema.OrderListResponse
-//	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
-//	@Security		ApiKeyAuth
-//	@Router			/api/v1/users/orders [get]
-func GetOrders(c *fiber.Ctx) error {
-	user, err := GetJWTUser(c)
-	if err != nil {
-		return err
-	}
-	logrus.Debugf("user: %v", user) // TODO: remove me
-	// TODO: get orders
-	return c.JSON(fiber.Map{})
-}
