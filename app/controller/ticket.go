@@ -81,6 +81,9 @@ func UpdateTicket(c *fiber.Ctx) error {
 		})
 	}
 
+	// Manually update the fields with different names
+	existingTicket.Title = updateTicket.Title
+	existingTicket.Show = updateTicket.Show
 	if err := db.Save(&existingTicket).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": err.Error(),
@@ -103,9 +106,9 @@ func UpdateTicket(c *fiber.Ctx) error {
 func GetTicket(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	// Check if the ticket exists
+	// Query the ticket by ID
 	existingTicket := model.Ticket{}
-	if err := db.First(&existingTicket, id).Error; err != nil {
+	if err := db.Where("id = ?", id).First(&existingTicket).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "Ticket not found",
 		})

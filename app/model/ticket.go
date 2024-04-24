@@ -15,7 +15,7 @@ type Ticket struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 	Seat      string
 	Show      string
-	Tittle    string
+	Title     string
 	Type      string
 	Price     float64
 }

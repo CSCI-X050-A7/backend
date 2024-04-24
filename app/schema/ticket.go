@@ -5,18 +5,18 @@ import (
 )
 
 type Ticket struct {
-	ID     uuid.UUID `json:"id"`
-	Title  string    `json:"title"`
-	Seat   string    `json:"seat"`
-	ShowID string    `json:"show"`
-	Type   string    `json:"type"`
-	Price  float64   `json:"price"`
+	ID    uuid.UUID `json:"id"`
+	Title string    `json:"title"`
+	Seat  string    `json:"seat"`
+	Show  string    `json:"show"`
+	Type  string    `json:"type"`
+	Price float64   `json:"price"`
 }
 
 type UpsertTicket struct {
-	Title  string  `json:"title"`
-	Seat   string  `json:"seat"`
-	ShowID string  `json:"show"`
-	Type   string  `json:"type"`
-	Price  float64 `json:"price"`
+	Title string  `json:"title"`
+	Seat  string  `json:"seat"`
+	Show  string  `json:"show"`
+	Type  string  `json:"type"`
+	Price float64 `json:"price"`
 }
