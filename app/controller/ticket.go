@@ -4,6 +4,7 @@ import (
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
 	"github.com/gofiber/fiber/v2"
@@ -96,7 +97,7 @@ func UpdateTicket(c *fiber.Ctx) error {
 // GetTicket func retrieves a ticket by ID
 //
 // @Description	Retrieve a ticket by ID.
-// @Summary		retrieve a ticket
+// @Summary		retrieve a ticket by ID
 // @Tags		Ticket
 // @Param       id path string true "Ticket ID"
 // @Success		200	   {object}	schema.Ticket
@@ -104,9 +105,13 @@ func UpdateTicket(c *fiber.Ctx) error {
 // @Router		/api/v1/tickets/{id} [get]
 // @Security    ApiKeyAuth
 func GetTicket(c *fiber.Ctx) error {
-	id := c.Params("id")
-
-	// Query the ticket by ID
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "Invalid ticket ID",
+		})
+	}
+	// Check if the ticket exists
 	existingTicket := model.Ticket{}
 	if err := db.Where("id = ?", id).First(&existingTicket).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
