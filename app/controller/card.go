@@ -20,6 +20,10 @@ import (
 // @Failure		  400,404 {object}    schema.ErrorResponse "Error"
 // @Router        /api/v1/cards/{id} [get]
 func GetCard(c *fiber.Ctx) error {
+	user, err := GetJWTUser(c)
+	if err != nil {
+		return err
+	}
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -28,7 +32,7 @@ func GetCard(c *fiber.Ctx) error {
 	}
 	card := model.Card{ID: ID}
 	err = db.First(&card).Error
-	if err != nil {
+	if err != nil || card.UserID != user.ID {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "card not found",
 		})
