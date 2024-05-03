@@ -29,6 +29,7 @@ type Card struct {
 	City       string
 	State      string
 	Zip        string
+	UserID     uuid.UUID
 }
 
 func AESEncrypt(key []byte, plaintext string) (string, error) {

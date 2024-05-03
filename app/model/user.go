@@ -9,24 +9,24 @@ import (
 
 // User struct to describe User object.
 type User struct {
-	ID              uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
-	IsActive        bool
-	ActivationCode  string
-	IsAdmin         bool
-	UserName        string
-	Email           string
-	Password        string
-	PasswordCode    string
-	Name            string
-	Phone           string
-	Address         string
-	Address2        string
-	City            string
-	State           string
-	Zip             string
-	NeedPromotion   bool
-	PaymentCardList []Card `gorm:"foreignKey:UserID"`
+	ID             uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt `gorm:"index"`
+	IsActive       bool
+	ActivationCode string
+	IsAdmin        bool
+	UserName       string
+	Email          string
+	Password       string
+	PasswordCode   string
+	Name           string
+	Phone          string
+	Address        string
+	Address2       string
+	City           string
+	State          string
+	Zip            string
+	NeedPromotion  bool
+	Cards          []Card
 }
