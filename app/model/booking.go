@@ -21,5 +21,4 @@ type Booking struct {
 	UsedTicketID uuid.UUID
 	UsedTicket   Ticket
 	ShowTime     time.Time
-	CinemaID     uuid.UUID
 }
