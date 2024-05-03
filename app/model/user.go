@@ -27,13 +27,6 @@ type User struct {
 	City           string
 	State          string
 	Zip            string
-	CardType       string
-	CardNumber     string
-	CardExpiration string
-	CardAddress    string
-	CardAddress2   string
-	CardCity       string
-	CardState      string
-	CardZip        string
 	NeedPromotion  bool
+	Cards          []Card
 }

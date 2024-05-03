@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
-	"github.com/CSCI-X050-A7/backend/pkg/config"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
 	"github.com/CSCI-X050-A7/backend/pkg/email"
 	"github.com/CSCI-X050-A7/backend/pkg/validator"
@@ -31,10 +31,6 @@ func GetUserMe(c *fiber.Ctx) error {
 		return err
 	}
 	userDetail := convert.To[schema.UserDetail](user)
-	key := []byte(config.Conf.JWTSecret)
-	userDetail.CardType, _ = AESDecrypt(key, userDetail.CardType)
-	userDetail.CardNumber, _ = AESDecrypt(key, userDetail.CardNumber)
-	userDetail.CardExpiration, _ = AESDecrypt(key, userDetail.CardExpiration)
 	return c.JSON(userDetail)
 }
 
@@ -55,7 +51,15 @@ func UpdateUserMe(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-
+	for _, card := range user.Cards {
+		cardToDelete := card
+		result := db.Delete(&cardToDelete)
+		if result.Error != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"msg": result.Error,
+			})
+		}
+	}
 	updateUser := &schema.UpdateUser{}
 	if err := c.BodyParser(updateUser); err != nil {
 		// Return 400 and error message.
@@ -73,11 +77,22 @@ func UpdateUserMe(c *fiber.Ctx) error {
 			"errors": validator.ValidatorErrors(err),
 		})
 	}
-	// AES encryption for payment info
-	key := []byte(config.Conf.JWTSecret)
-	updateUser.CardNumber, _ = AESEncrypt(key, updateUser.CardNumber)
-	updateUser.CardType, _ = AESEncrypt(key, updateUser.CardType)
-	updateUser.CardExpiration, _ = AESEncrypt(key, updateUser.CardExpiration)
+	for _, card := range updateUser.Cards {
+		cardToUpdate := card
+		newCard := model.Card{}
+		newCard.UserID = user.ID
+		if err := convert.Update(&newCard, &cardToUpdate); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"msg": err.Error(),
+			})
+		}
+		if err := db.Create(&newCard).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"msg": err.Error(),
+			})
+		}
+	}
+	updateUser.Cards = []schema.UpdateCard{}
 	if err := convert.Update(&user, &updateUser); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
@@ -102,7 +117,7 @@ func UpdateUserMe(c *fiber.Ctx) error {
 		}
 	}()
 
-	return c.JSON(convert.To[schema.UpdateUser](user))
+	return c.JSON(convert.To[schema.UserDetail](user))
 }
 
 // GetOrders func get user's history orders.

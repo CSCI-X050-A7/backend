@@ -36,6 +36,7 @@ func MigrateDatabase() error {
 		&model.Movie{},
 		&model.User{},
 		&model.Booking{},
+		&model.Card{},
 		&model.Promotion{},
 		&model.Ticket{},
 	)

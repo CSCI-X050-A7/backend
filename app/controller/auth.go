@@ -1,14 +1,9 @@
 package controller
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
 	"crypto/rand"
-	"encoding/base64"
 	"fmt"
-	"io"
 	"math/big"
-	"strings"
 	"time"
 
 	"github.com/CSCI-X050-A7/backend/app/model"
@@ -138,12 +133,6 @@ func Register(c *fiber.Ctx) error {
 	}
 	// bcrypt encryption for password
 	register.Password, _ = GeneratePasswordHash([]byte(register.Password))
-
-	// AES encryption for payment info
-	key := []byte(config.Conf.JWTSecret)
-	register.CardNumber, _ = AESEncrypt(key, register.CardNumber)
-	register.CardType, _ = AESEncrypt(key, register.CardType)
-	register.CardExpiration, _ = AESEncrypt(key, register.CardExpiration)
 
 	newUser := model.User{}
 	if err := convert.Update(&newUser, &register); err != nil {
@@ -291,60 +280,6 @@ func GeneratePasswordHash(password []byte) (string, error) {
 	}
 
 	return string(hashedPassword), nil
-}
-
-func AESEncrypt(key []byte, plaintext string) (string, error) {
-	truncateKey := make([]byte, 16)
-	copy(truncateKey, key)
-	var byteString []byte
-	if len(plaintext) < 16 {
-		paddedTxt := make([]byte, 16)
-		copy(paddedTxt, plaintext)
-		byteString = []byte(paddedTxt)
-	} else {
-		byteString = []byte(plaintext)
-	}
-	block, err := aes.NewCipher(truncateKey)
-	// err: cipher cannot be created
-	if err != nil {
-		return "", err
-	}
-	cipherText := make([]byte, aes.BlockSize+len(byteString))
-	iv := cipherText[:aes.BlockSize] // extends to blocksize
-	// err: can't encrypt
-	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
-	}
-	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(cipherText[aes.BlockSize:], byteString)
-	return base64.StdEncoding.EncodeToString(cipherText), nil
-}
-
-func AESDecrypt(key []byte, plaintext string) (string, error) {
-	cipherText, err := base64.StdEncoding.DecodeString(plaintext)
-	// err: cannot base64 decode
-	if err != nil {
-		return "", err
-	}
-
-	truncateKey := make([]byte, 16)
-	copy(truncateKey, key)
-	block, err := aes.NewCipher(truncateKey)
-	// err: cannot make new cipher
-	if err != nil {
-		return "", err
-	}
-	// err: ciphertext block size is wrong
-	if len(cipherText) < aes.BlockSize {
-		return "", fmt.Errorf("ciphertext wrong block size")
-	}
-	iv := cipherText[:aes.BlockSize]
-	cipherText = cipherText[aes.BlockSize:]
-	stream := cipher.NewCFBDecrypter(block, iv)
-	stream.XORKeyStream(cipherText, cipherText)
-	decrypted := string(cipherText)
-	decrypted = strings.Trim(decrypted, "\u0000")
-	return decrypted, nil
 }
 
 func IsValidPassword(hash, password []byte) bool {

@@ -26,7 +26,7 @@ import (
 func AdminGetUsers(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
 	objs, count, err := ListObjs[schema.UserDetail](
-		db.Model(model.User{}), pagination,
+		db.Preload("Cards").Model(model.User{}), pagination,
 	)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -61,7 +61,7 @@ func AdminGetUser(c *fiber.Ctx) error {
 		})
 	}
 	user := model.User{ID: ID}
-	err = db.First(&user).Error
+	err = db.Preload("Cards").First(&user).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "user not found",

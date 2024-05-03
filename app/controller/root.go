@@ -102,7 +102,7 @@ func GetJWTUser(c *fiber.Ctx) (user model.User, err error) {
 		return
 	}
 	user.ID = ID
-	if db.First(&user).Error != nil {
+	if db.Preload("Cards").First(&user).Error != nil {
 		err = c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "user not found",
 		})
