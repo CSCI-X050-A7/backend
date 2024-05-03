@@ -8,9 +8,9 @@ import (
 
 func TicketRoutes(a *fiber.App) {
 	route := a.Group("/api/v1/tickets")
-	route.Get("/:ticketID", controller.GetTicket)
+	route.Get("/:id", controller.GetTicket)
 	routeProtectedAdmin := route.Group("", middleware.JWTProtected(), middleware.IsAdmin)
 	routeProtectedAdmin.Post("/", controller.CreateTicket)
-	routeProtectedAdmin.Put("/:ticketID", controller.UpdateTicket)
+	routeProtectedAdmin.Put("/:id", controller.UpdateTicket)
 	// routeProtectedAdmin.Delete("/:id", controller.DeleteTicket)
 }
