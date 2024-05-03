@@ -37,6 +37,7 @@ func Serve() {
 	route.PromoRoutes(app)
 	route.UserRoutes(app)
 	route.MiscRoutes(app)
+	route.TicketRoutes(app)
 	route.NotFoundRoute(app)
 	route.CardRoutes(app)
 
