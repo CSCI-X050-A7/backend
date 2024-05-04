@@ -139,4 +139,39 @@ func UpdatePromo(c *fiber.Ctx) error {
 	return c.JSON(convert.To[schema.Promotion](promotion))
 }
 
-// TODO: add deletion
+// DeletePromo func delete a promotion
+// @Description     delete promotion
+// @Summary 	    delete a promotion
+// @Tags            Promotion
+// @Accept          json
+// @Produce         json
+// @Param           id                 path        string                true      "Promotion ID"
+// @Success         200                {object}    schema.Promotion      "Ok"
+// @Failure         500,401,403,404    {object}    schema.ErrorResponse  "Error"
+// @Security        ApiKeyAuth
+// @Router          /api/v1/promotions/{id} [delete]
+func DeletePromo(c *fiber.Ctx) error {
+	ID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+
+	promotion := model.Promotion{ID: ID}
+	err = db.First(&promotion).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "promotion not found",
+		})
+	}
+
+	promotion = model.Promotion{ID: ID}
+	result := db.Delete(&promotion)
+	if result.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": result.Error,
+		})
+	}
+	return c.JSON(fiber.Map{})
+}
