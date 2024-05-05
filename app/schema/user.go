@@ -29,20 +29,35 @@ type UserDetail struct {
 	NeedPromotion bool      `json:"need_promotion"`
 	Cards         []Card    `json:"cards" foreignKey:"UserDetailID"`
 }
+type UserDetailNoCards struct {
+	ID            uuid.UUID `json:"id"`
+	IsActive      bool      `json:"is_active"`
+	IsAdmin       bool      `json:"is_admin"`
+	UserName      string    `json:"username"`
+	Email         string    `json:"email"`
+	Name          string    `json:"name"`
+	Phone         string    `json:"phone"`
+	Address       string    `json:"address"`
+	Address2      string    `json:"address2"`
+	City          string    `json:"city"`
+	State         string    `json:"state"`
+	Zip           string    `json:"zip"`
+	NeedPromotion bool      `json:"need_promotion"`
+}
 
 type RegisterUser struct {
-	UserName      string `json:"username" validate:"required,gte=3,lte=50"`
-	Email         string `json:"email" validate:"required,email,lte=150"`
-	Password      string `json:"password" validate:"required,lte=100,gte=8"`
-	Name          string `json:"name" validate:"required,lte=100"`
-	Phone         string `json:"phone" validate:"required,number,eq=10"`
-	Address       string `json:"address" validate:"required,lte=150"`
-	Address2      string `json:"address2" validate:"lte=150"`
-	City          string `json:"city" validate:"required,lte=100"`
-	State         string `json:"state" validate:"required,lte=100"`
-	Zip           string `json:"zip" validate:"required,number,eq=5"`
-	NeedPromotion bool   `json:"need_promotion"`
-	Cards         []Card `json:"cards" validate:"required"`
+	UserName      string       `json:"username" validate:"required,gte=3,lte=50"`
+	Email         string       `json:"email" validate:"required,email,lte=150"`
+	Password      string       `json:"password" validate:"required,lte=100,gte=8"`
+	Name          string       `json:"name" validate:"required,lte=100"`
+	Phone         string       `json:"phone" validate:"required,number"`
+	Address       string       `json:"address" validate:"required,lte=150"`
+	Address2      string       `json:"address2" validate:"lte=150"`
+	City          string       `json:"city" validate:"required,lte=100"`
+	State         string       `json:"state" validate:"required,lte=100"`
+	Zip           string       `json:"zip" validate:"required,number"`
+	NeedPromotion bool         `json:"need_promotion"`
+	Cards         []UpdateCard `json:"cards" validate:"required"`
 }
 
 type UpdateUser struct {
@@ -83,7 +98,7 @@ type CreateUser struct {
 	Phone    string `json:"phone" validate:"required,lte=20"`
 }
 
-type UserDetailListResponse = ListResponse[UserDetail]
+type UserDetailNoCardsListResponse = ListResponse[UserDetailNoCards]
 
 type Auth struct {
 	Username string `json:"username" default:"demo"`
