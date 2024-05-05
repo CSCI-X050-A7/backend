@@ -8,8 +8,8 @@ import (
 
 func PromoRoutes(a *fiber.App) {
 	route := a.Group("/api/v1/promotions")
-	route.Get("/", controller.GetPromos)
 	routeProtectedAdmin := route.Group("", middleware.JWTProtected(), middleware.IsAdmin)
+	routeProtectedAdmin.Get("/", controller.GetPromos)
 	routeProtectedAdmin.Post("/", controller.CreatePromo)
 	routeProtectedAdmin.Put("/:id", controller.UpdatePromo)
 }
