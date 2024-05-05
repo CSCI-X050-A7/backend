@@ -15,4 +15,5 @@ func MovieRoutes(a *fiber.App) {
 	routeProtectedAdmin.Post("/", controller.CreateMovie)
 	routeProtectedAdmin.Put("/:id", controller.UpdateMovie)
 	routeProtectedAdmin.Delete("/:id", controller.DeleteMovie)
+	routeProtectedAdmin.Get("/:id", controller.GetMovieShows)
 }

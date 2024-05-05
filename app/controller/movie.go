@@ -250,3 +250,41 @@ func DeleteMovie(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{})
 }
+
+// GetMovieShows func gets all shows for a movie.
+//
+//	@Description	get all shows for a movie.
+//	@Summary		get all shows for a movie
+//	@Tags			Movie
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"Movie ID"
+//	@Success		200		{object}	[]schema.Show
+//	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
+//	@Router			/api/v1/movies/{id}/shows [get]
+func GetMovieShows(c *fiber.Ctx) error {
+	ID, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+
+	movie := model.Movie{ID: ID}
+	err = db.First(&movie).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "movie not found",
+		})
+	}
+
+	shows := []model.Show{}
+	err = db.Model(&movie).Association("Shows").Find(&shows)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+
+	return c.JSON(convert.To[schema.ShowListResponse](shows))
+}
