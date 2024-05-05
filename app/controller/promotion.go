@@ -6,6 +6,7 @@ import (
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
+	"github.com/CSCI-X050-A7/backend/pkg/email"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
@@ -85,6 +86,23 @@ func CreatePromo(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
+
+	var promoUsers []model.User
+	db.Where(&model.User{NeedPromotion: true}).Find(&promoUsers)
+
+	for _, sendUser := range promoUsers {
+		go func(u model.User) {
+			err := email.Send(
+				u.Email,
+				"Don't miss out on our new promotional offer!",
+				fmt.Sprintf("Use promo code %s for a %f%% off discount. Valid until %s",
+					newPromo.Code, newPromo.Discount, newPromo.ExpiryDate),
+			)
+			if err != nil {
+				logrus.Errorf("email send error: %v", err)
+			}
+		}(sendUser)
+	}
 	return c.JSON(convert.To[schema.Promotion](newPromo))
 }
 
@@ -138,5 +156,3 @@ func UpdatePromo(c *fiber.Ctx) error {
 	}
 	return c.JSON(convert.To[schema.Promotion](promotion))
 }
-
-// TODO: add deletion

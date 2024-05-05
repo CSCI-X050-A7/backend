@@ -17,19 +17,20 @@ import (
 
 // Card struct to describe Card object.
 type Card struct {
-	ID         uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
-	Type       string
-	Number     string
-	Expiration string
-	Address    string
-	Address2   string
-	City       string
-	State      string
-	Zip        string
-	UserID     uuid.UUID
+	ID           uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
+	Type         string
+	Number       string
+	Expiration   string
+	Address      string
+	Address2     string
+	City         string
+	State        string
+	Zip          string
+	UserID       uuid.UUID
+	UserDetailID uuid.UUID
 }
 
 func AESEncrypt(key []byte, plaintext string) (string, error) {

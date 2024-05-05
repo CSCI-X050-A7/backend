@@ -28,5 +28,5 @@ type User struct {
 	State          string
 	Zip            string
 	NeedPromotion  bool
-	Cards          []Card
+	Cards          []Card `gorm:"foreignKey:UserID"`
 }

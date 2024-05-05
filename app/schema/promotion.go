@@ -10,12 +10,14 @@ type Promotion struct {
 	IsExpired  bool      `json:"is_expired" validate:"required"`
 	ExpiryDate string    `json:"expiry_date" validate:"required,lte=255"`
 	Discount   float64   `json:"discount" validate:"required"`
+	Code       string    `json:"code" validate:"required,lte=255"`
 }
 
 type UpsertPromotion struct {
 	IsExpired  bool    `json:"is_expired" validate:"required"`
 	ExpiryDate string  `json:"expiry_date" validate:"required,lte=255"`
 	Discount   float64 `json:"discount" validate:"required"`
+	Code       string  `json:"code" validate:"required,lte=255"`
 }
 
 type PromoListResponse = ListResponse[Promotion]

@@ -14,4 +14,5 @@ type Promotion struct {
 	IsExpired  bool
 	ExpiryDate string
 	Discount   float64
+	Code       string
 }
