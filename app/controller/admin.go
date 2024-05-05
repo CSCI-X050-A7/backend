@@ -19,14 +19,14 @@ import (
 //	@Produce		json
 //	@Param			offset		query		integer	false	"offset"
 //	@Param			limit		query		integer	false	"limit"
-//	@Success		200			{object}	schema.UserDetailListResponse
+//	@Success		200			{object}	schema.UserDetailNoCardsListResponse
 //	@Failure		400,401,403	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/admin/users [get]
 func AdminGetUsers(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
-	objs, count, err := ListObjs[schema.UserDetail](
-		db.Preload("Cards").Model(model.User{}), pagination,
+	objs, count, err := ListObjs[schema.UserDetailNoCards](
+		db.Model(model.User{}), pagination,
 	)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

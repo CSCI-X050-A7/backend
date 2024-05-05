@@ -29,6 +29,21 @@ type UserDetail struct {
 	NeedPromotion bool      `json:"need_promotion"`
 	Cards         []Card    `json:"cards" validate:"required"`
 }
+type UserDetailNoCards struct {
+	ID            uuid.UUID `json:"id"`
+	IsActive      bool      `json:"is_active"`
+	IsAdmin       bool      `json:"is_admin"`
+	UserName      string    `json:"username"`
+	Email         string    `json:"email"`
+	Name          string    `json:"name"`
+	Phone         string    `json:"phone"`
+	Address       string    `json:"address"`
+	Address2      string    `json:"address2"`
+	City          string    `json:"city"`
+	State         string    `json:"state"`
+	Zip           string    `json:"zip"`
+	NeedPromotion bool      `json:"need_promotion"`
+}
 
 type RegisterUser struct {
 	UserName      string       `json:"username" validate:"required,gte=3,lte=50"`
@@ -83,7 +98,7 @@ type CreateUser struct {
 	Phone    string `json:"phone" validate:"required,lte=20"`
 }
 
-type UserDetailListResponse = ListResponse[UserDetail]
+type UserDetailNoCardsListResponse = ListResponse[UserDetailNoCards]
 
 type Auth struct {
 	Username string `json:"username" default:"demo"`
