@@ -8,12 +8,12 @@ import (
 )
 
 type Order struct {
-	ID        uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Tickets   []Ticket
-	Promotion Promotion
-	Show      Show
-	Card      Card
+	ID          uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	Tickets     []Ticket
+	PromotionID uuid.UUID
+	ShowID      uuid.UUID
+	CardID      uuid.UUID
 }

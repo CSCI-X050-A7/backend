@@ -13,7 +13,7 @@ type Show struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	DeletedAt         gorm.DeletedAt `gorm:"index"`
-	Movie             Movie
+	MovieID           uuid.UUID
 	StartTime         time.Time
 	EndTime           time.Time
 	BookingFee        float32
