@@ -13,7 +13,7 @@ type Order struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
-	TicketsArray []Ticket       // replace with Ticket[] once that struct is created
+	TicketsArray []Ticket
 	Promotion    Promotion
 	Show         Show
 	Card         Card
