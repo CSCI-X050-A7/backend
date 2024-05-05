@@ -2,7 +2,6 @@ package route
 
 import (
 	"github.com/CSCI-X050-A7/backend/app/controller"
-
 	"github.com/gofiber/fiber/v2"
 )
 

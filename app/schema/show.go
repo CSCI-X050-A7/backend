@@ -17,6 +17,7 @@ type Show struct {
 	SeniorTicketPrice float32   `json:"senior_ticket_price" validate:"required,lte=255"`
 	TheaterLocation   string    `json:"theater_location" validate:"required,lte=1023"`
 }
+
 type UpsertShow struct {
 	MovieID           uuid.UUID `json:"movie_id" validate:"required"`
 	StartTime         time.Time `json:"start_time" validate:"required,lte=255"`

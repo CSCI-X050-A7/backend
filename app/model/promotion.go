@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// User struct to describe User object.
+// Promotion struct to describe promotion object.
 type Promotion struct {
 	ID        uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
 	CreatedAt time.Time
