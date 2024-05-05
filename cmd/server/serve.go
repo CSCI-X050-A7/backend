@@ -37,9 +37,9 @@ func Serve() {
 	route.PromoRoutes(app)
 	route.UserRoutes(app)
 	route.MiscRoutes(app)
-	route.TicketRoutes(app)
-	route.NotFoundRoute(app)
 	route.CardRoutes(app)
+	route.OrderRoutes(app)
+	route.ShowRoutes(app)
 	route.NotFoundRoute(app)
 
 	// signal channel to capture system calls
