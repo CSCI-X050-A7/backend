@@ -95,8 +95,8 @@ func CreatePromo(c *fiber.Ctx) error {
 			err := email.Send(
 				u.Email,
 				"Don't miss out on our new promotional offer!",
-				fmt.Sprintf("Use promo code %s for a %f%% off discount. Valid until %s",
-					newPromo.Code, newPromo.Discount, newPromo.ExpiryDate),
+				fmt.Sprintf("Use promo code '%s' at checkout for a %.0f%% off discount!\nValid until %s.",
+					newPromo.Code, newPromo.Discount*100, newPromo.ExpiryDate),
 			)
 			if err != nil {
 				logrus.Errorf("email send error: %v", err)
