@@ -9,7 +9,6 @@ import (
 func ShowRoutes(a *fiber.App) {
 	route := a.Group("/api/v1/shows")
 	route.Get("/:id", controller.GetShow)
-	route.Get("/:id/", controller.GetShowsByMovieID)
 	routeProtectedAdmin := route.Group("", middleware.JWTProtected(), middleware.IsAdmin)
 	routeProtectedAdmin.Post("/:id", controller.CreateShow)
 	routeProtectedAdmin.Put("/:id", controller.UpdateShow)
