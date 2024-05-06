@@ -19,7 +19,7 @@ type Movie struct {
 	TrailerPicture string    `json:"trailer_picture" validate:"required,lte=1023"`
 	TrailerVideo   string    `json:"trailer_video" validate:"required,lte=1023"`
 	RatingCode     string    `json:"rating_code" validate:"required,lte=255"`
-	ShowTime       time.Time `json:"show_time" validate:"required,lte=255"`
+	ShowTime       time.Time `json:"show_time" validate:"required"`
 }
 
 type UpsertMovie struct {

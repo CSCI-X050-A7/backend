@@ -261,7 +261,7 @@ func DeleteMovie(c *fiber.Ctx) error {
 //	@Param			id		path		string	true	"Movie ID"
 //	@Success		200		{object}	[]schema.Show
 //	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
-//	@Router			/api/v1/movies/{id}/shows [get]
+//	@Router			/api/v1/movies/{id} [get]
 func GetMovieShows(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -274,7 +274,7 @@ func GetMovieShows(c *fiber.Ctx) error {
 	err = db.First(&movie).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "movie not found",
+			"msg": "movie doesn't exist",
 		})
 	}
 
