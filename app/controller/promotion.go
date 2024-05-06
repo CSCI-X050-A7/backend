@@ -20,7 +20,7 @@ import (
 // @Tags		Promotion
 // @Accept		json
 // @Produce		json
-// @Param       search query    string  false "search by title"
+// @Param       search query    string  false "search by code"
 // @Param 		offset query    integer false "offset"
 // @Param 		limit  query    integer false "limit"
 // @Success		200	   {object}	schema.PromoListResponse
@@ -32,7 +32,7 @@ func GetPromos(c *fiber.Ctx) error {
 	statement := db.Model(model.Promotion{})
 	if search != "" {
 		statement = statement.
-			Where("LOWER(title) LIKE ?", fmt.Sprintf("%%%s%%", search))
+			Where("LOWER(code) LIKE ?", fmt.Sprintf("%%%s%%", search))
 	}
 	objs, count, err := ListObjs[schema.Promotion](
 		statement,
