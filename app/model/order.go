@@ -14,7 +14,7 @@ type Order struct {
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
 	TicketsArray []Ticket
-	Promotion    Promotion
+	Promotion    Promotion `gorm:"foreignKey:OrderID"`
 	Show         Show
 	Card         Card
 	Seats        []string

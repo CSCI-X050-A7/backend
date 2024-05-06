@@ -72,7 +72,29 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	newOrder := model.Order{}
+	// Look up the promotion in the database
+	var promotion model.Promotion
+	db.Where("code = ?", createOrder.Promotion).First(&promotion)
+
+	// Look up the tickets in the database
+	var tickets []model.Ticket
+	db.Where("id IN ?", createOrder.TicketsArray).Find(&tickets)
+
+	// Look up the show in the database
+	var show model.Show
+	db.Where("id = ?", createOrder.Show).First(&show)
+
+	// Look up the card in the database
+	var card model.Card
+	db.Where("id = ?", createOrder.Card).First(&card)
+
+	newOrder := model.Order{
+		Show:         show,
+		Card:         card,
+		Seats:        createOrder.Seats,
+		Promotion:    promotion,
+		TicketsArray: tickets,
+	}
 	if err := convert.Update(&newOrder, &createOrder); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
