@@ -12,6 +12,7 @@ type Order struct {
 	PromotionID     uuid.UUID `json:"promotion_id" validate:"required"`
 	ShowID          uuid.UUID `json:"show_id" validate:"required"`
 	CardID          uuid.UUID `json:"card_id" validate:"required"`
+	MovieTitle      string    `json:"movie_title" validate:"required,lte=255"`
 	TicketPrice     float64   `json:"ticket_price" validate:"required"`
 	BookingFeePrice float64   `json:"booking_fee_price" validate:"required"`
 	PromotionPrice  float64   `json:"promotion_price" validate:"required"`

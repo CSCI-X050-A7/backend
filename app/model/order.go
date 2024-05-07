@@ -18,6 +18,7 @@ type Order struct {
 	PromotionID     uuid.UUID
 	ShowID          uuid.UUID
 	CardID          uuid.UUID
+	MovieTitle      string
 	TicketPrice     float64
 	BookingFeePrice float64
 	PromotionPrice  float64

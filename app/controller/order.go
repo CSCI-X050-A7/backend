@@ -102,12 +102,21 @@ func CreateOrder(c *fiber.Ctx) error {
 			"msg": "show not found",
 		})
 	}
+	movie := model.Movie{}
+	err = db.Where(&model.Movie{ID: show.MovieID}).
+		First(&movie).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "movie not found",
+		})
+	}
 
 	newOrder := model.Order{
 		ShowID:      show.ID,
 		UserID:      user.ID,
 		PromotionID: promotion.ID,
 		CheckOut:    false,
+		MovieTitle:  movie.Title,
 	}
 	if err := db.Create(&newOrder).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
