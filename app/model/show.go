@@ -16,9 +16,9 @@ type Show struct {
 	MovieID           uuid.UUID
 	StartTime         time.Time
 	EndTime           time.Time
-	BookingFee        float32
-	AdultTicketPrice  float32
-	ChildTicketPrice  float32
-	SeniorTicketPrice float32
+	BookingFee        float64
+	AdultTicketPrice  float64
+	ChildTicketPrice  float64
+	SeniorTicketPrice float64
 	TheaterLocation   string
 }

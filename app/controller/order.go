@@ -21,8 +21,13 @@ import (
 //	@Param			id		path		string	true	"Order ID"
 //	@Success		200		{object}	schema.Order
 //	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
+//	@Security		ApiKeyAuth
 //	@Router			/api/v1/orders/{id} [get]
 func GetOrder(c *fiber.Ctx) error {
+	user, err := GetJWTUser(c)
+	if err != nil {
+		return err
+	}
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -30,8 +35,8 @@ func GetOrder(c *fiber.Ctx) error {
 		})
 	}
 	order := model.Order{ID: ID}
-	err = db.First(&order).Error
-	if err != nil {
+	err = db.Preload("Tickets").First(&order).Error
+	if err != nil || user.ID != order.UserID {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"msg": "Order not found",
 		})
@@ -46,7 +51,7 @@ func GetOrder(c *fiber.Ctx) error {
 //	@Tags			Order
 //	@Accept			json
 //	@Produce		json
-//	@Param			Order		body		schema.UpsertOrder		true	"Create new order"
+//	@Param			Order		body		schema.CreateOrder		true	"Create new order"
 //	@Failure		400,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200			{object}	schema.Order			"Ok"
 //	@Security		ApiKeyAuth
@@ -57,7 +62,7 @@ func CreateOrder(c *fiber.Ctx) error {
 		return err
 	}
 	// Create new order struct
-	createOrder := &schema.UpsertOrder{}
+	createOrder := &schema.CreateOrder{}
 	if err := c.BodyParser(createOrder); err != nil {
 		// Return 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -76,36 +81,94 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	// TODO: create a reasonalbe order
-	// Look up the promotion in the database
-	var promotion model.Promotion
-	db.Where("code = ?", createOrder.PromotionID).First(&promotion)
-
-	// Look up the tickets in the database
-	var tickets []model.Ticket
-	// db.Where("id IN ?", createOrder.TicketsArray).Find(&tickets)
+	// Look up the promotion code in the database
+	promotion := model.Promotion{}
+	if createOrder.PromotionCode != "" {
+		err = db.Where(&model.Promotion{Code: createOrder.PromotionCode}).
+			First(&promotion).Error
+		if err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"msg": "promotion not found",
+			})
+		}
+	}
 
 	// Look up the show in the database
-	var show model.Show
-	db.Where("id = ?", createOrder.ShowID).First(&show)
-
-	// Look up the card in the database
-	var card model.Card
-	db.Where("id = ?", createOrder.CardID).First(&card)
+	show := model.Show{}
+	err = db.Where(&model.Show{ID: createOrder.ShowID}).
+		First(&show).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "show not found",
+		})
+	}
 
 	newOrder := model.Order{
 		ShowID:      show.ID,
-		CardID:      card.ID,
 		UserID:      user.ID,
 		PromotionID: promotion.ID,
-		Tickets:     tickets,
+		CheckOut:    false,
 	}
-	if err := convert.Update(&newOrder, &createOrder); err != nil {
+	if err := db.Create(&newOrder).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
-	if err := db.Create(&newOrder).Error; err != nil {
+
+	// create tickets
+	var totalPrice float64
+	totalPrice = 0
+	for _, ticket := range createOrder.Tickets {
+		price := show.AdultTicketPrice
+		if ticket.Type != "child" && ticket.Type != " senior" {
+			ticket.Type = "adult"
+		}
+		if ticket.Type == "child" {
+			price = show.ChildTicketPrice
+		} else if ticket.Type == "senior" {
+			price = show.SeniorTicketPrice
+		}
+		newTicket := model.Ticket{
+			OrderID: newOrder.ID,
+			ShowID:  show.ID,
+			Seat:    ticket.Seat,
+			Type:    ticket.Type,
+			Price:   price,
+		}
+		totalPrice += price
+		if err := db.Create(&newTicket).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"msg": err.Error(),
+			})
+		}
+	}
+	newOrder.TicketPrice = totalPrice
+
+	newOrder.BookingFeePrice = show.BookingFee
+	totalPrice += show.BookingFee
+
+	if createOrder.PromotionCode != "" {
+		promotionPrice := -totalPrice * promotion.Discount
+		newOrder.PromotionPrice = promotionPrice
+		totalPrice += promotionPrice
+	}
+
+	// sales tax
+	salesTaxPrice := totalPrice * 0.05
+	newOrder.SalesTaxPrice = salesTaxPrice
+	totalPrice += salesTaxPrice
+
+	newOrder.TotalPrice = totalPrice
+
+	if err := db.Save(&newOrder).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+
+	err = db.Preload("Tickets").Where(&model.Order{ID: newOrder.ID}).
+		First(&newOrder).Error
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
@@ -114,101 +177,90 @@ func CreateOrder(c *fiber.Ctx) error {
 	return c.JSON(convert.To[schema.Order](newOrder))
 }
 
-// UpdateOrder func update a Order.
+// CheckoutOrder func for check out an existing order.
 //
-//	@Description	update order
-//	@Summary		update a order
+//	@Description	Checkout a order.
+//	@Summary		checkout a order
 //	@Tags			Order
 //	@Accept			json
 //	@Produce		json
-//	@Param			id					path		string			true	"Order ID"
-//	@Param			updateOrder			body		schema.UpsertOrder	true	"Update a Order"
-//	@Success		200					{object}	schema.Order
-//	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
+//	@Param			id			path		string					true	"Order ID"
+//	@Param			Card		body		schema.UpdateCard		true	"Card to checkout"
+//	@Failure		400,401,500	{object}	schema.ErrorResponse	"Error"
+//	@Success		200			{object}	schema.Order			"Ok"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/orders/{id} [put]
-func UpdateOrder(c *fiber.Ctx) error {
+//	@Router			/api/v1/orders/{id}/checkout [post]
+func CheckoutOrder(c *fiber.Ctx) error {
+	user, err := GetJWTUser(c)
+	if err != nil {
+		return err
+	}
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
+
 	order := model.Order{ID: ID}
 	err = db.First(&order).Error
-	if err != nil {
+	if err != nil || user.ID != order.UserID {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "Order not found",
+			"msg": "order not found",
+		})
+	}
+	if order.CheckOut {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "order checked out",
 		})
 	}
 
-	updateOrder := &schema.UpsertOrder{}
-	if err := c.BodyParser(updateOrder); err != nil {
+	// Create new card struct
+	card := &schema.UpdateCard{}
+	if err := c.BodyParser(card); err != nil {
 		// Return 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
 
-	// Create a new validator for a order model.
+	// Create a new validator for a Order model.
 	validate := validator.NewValidator()
-	if err := validate.Struct(updateOrder); err != nil {
+	if err := validate.Struct(card); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg":    "invalid input found",
 			"errors": validator.ValidatorErrors(err),
 		})
 	}
-
-	if err := convert.Update(&order, &updateOrder); err != nil {
+	newCard := model.Card{}
+	newCard.UserID = user.ID
+	if err := convert.Update(&newCard, &card); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
+	if err := db.Create(&newCard).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	order.CardID = newCard.ID
+	order.CheckOut = true
+
 	if err := db.Save(&order).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
 
-	return c.JSON(convert.To[schema.Order](order))
-}
-
-// DeleteOrder func delete a Order.
-//
-//	@Description	delete order
-//	@Summary		delete a order
-//	@Tags			Order
-//	@Accept			json
-//	@Produce		json
-//	@Param			id				path		string					true	"Order ID"
-//	@Success		200				{object}	interface{}				"Ok"
-//	@Failure		401,403,404,500	{object}	schema.ErrorResponse	"Error"
-//	@Security		ApiKeyAuth
-//	@Router			/api/v1/orders/{id} [delete]
-func DeleteOrder(c *fiber.Ctx) error {
-	ID, err := uuid.Parse(c.Params("id"))
+	err = db.Preload("Tickets").Where(&model.Order{ID: order.ID}).
+		First(&order).Error
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
 
-	order := model.Order{ID: ID}
-	err = db.First(&order).Error
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "user not found",
-		})
-	}
-
-	order = model.Order{ID: ID}
-	result := db.Delete(&order)
-	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": result.Error,
-		})
-	}
-
-	return c.JSON(fiber.Map{})
+	return c.JSON(convert.To[schema.Order](order))
 }

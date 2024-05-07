@@ -9,13 +9,19 @@ import (
 
 // Order struct to describe order object.
 type Order struct {
-	ID          uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt `gorm:"index"`
-	Tickets     []Ticket
-	UserID      uuid.UUID
-	PromotionID uuid.UUID
-	ShowID      uuid.UUID
-	CardID      uuid.UUID
+	ID              uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	Tickets         []Ticket
+	UserID          uuid.UUID
+	PromotionID     uuid.UUID
+	ShowID          uuid.UUID
+	CardID          uuid.UUID
+	TicketPrice     float64
+	BookingFeePrice float64
+	PromotionPrice  float64
+	SalesTaxPrice   float64
+	TotalPrice      float64
+	CheckOut        bool
 }
