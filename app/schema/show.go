@@ -9,8 +9,8 @@ import (
 type Show struct {
 	ID                uuid.UUID `json:"id" validate:"required"`
 	MovieID           uuid.UUID `json:"movie_id" validate:"required"`
-	StartTime         time.Time `json:"start_time" validate:"required,lte=255"`
-	EndTime           time.Time `json:"end_time" validate:"required,lte=255"`
+	StartTime         time.Time `json:"start_time" validate:"required"`
+	EndTime           time.Time `json:"end_time" validate:"required"`
 	BookingFee        float64   `json:"booking_fee" validate:"required,lte=255"`
 	AdultTicketPrice  float64   `json:"adult_ticket_price" validate:"required,lte=255"`
 	ChildTicketPrice  float64   `json:"child_ticket_price" validate:"required,lte=255"`
@@ -20,8 +20,8 @@ type Show struct {
 
 type UpsertShow struct {
 	MovieID           uuid.UUID `json:"movie_id" validate:"required"`
-	StartTime         time.Time `json:"start_time" validate:"required,lte=255"`
-	EndTime           time.Time `json:"end_time" validate:"required,lte=255"`
+	StartTime         time.Time `json:"start_time" validate:"required"`
+	EndTime           time.Time `json:"end_time" validate:"required"`
 	BookingFee        float64   `json:"booking_fee" validate:"required,lte=255"`
 	AdultTicketPrice  float64   `json:"adult_ticket_price" validate:"required,lte=255"`
 	ChildTicketPrice  float64   `json:"child_ticket_price" validate:"required,lte=255"`
