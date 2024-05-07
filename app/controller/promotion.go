@@ -95,7 +95,7 @@ func CreatePromo(c *fiber.Ctx) error {
 			err := email.Send(
 				u.Email,
 				"Don't miss out on our new promotional offer!",
-				fmt.Sprintf("Use promo code '%s' at checkout for a %.0f%% off discount!.",
+				fmt.Sprintf("Use promo code '%s' at checkout for a %.0f%% off discount!",
 					newPromo.Code, newPromo.Discount*100),
 			)
 			if err != nil {

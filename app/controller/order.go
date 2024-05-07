@@ -21,7 +21,7 @@ import (
 //	@Param			id		path		string	true	"Order ID"
 //	@Success		200		{object}	schema.Order
 //	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
-//	@Router			/api/v1/Orders/{id} [get]
+//	@Router			/api/v1/orders/{id} [get]
 func GetOrder(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -50,7 +50,7 @@ func GetOrder(c *fiber.Ctx) error {
 //	@Failure		400,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200			{object}	schema.Order			"Ok"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Orders [post]
+//	@Router			/api/v1/orders [post]
 func CreateOrder(c *fiber.Ctx) error {
 	// Create new order struct
 	createOrder := &schema.UpsertOrder{}
@@ -99,7 +99,7 @@ func CreateOrder(c *fiber.Ctx) error {
 //	@Success		200					{object}	schema.Order
 //	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Orders/{id} [put]
+//	@Router			/api/v1/orders/{id} [put]
 func UpdateOrder(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -158,7 +158,7 @@ func UpdateOrder(c *fiber.Ctx) error {
 //	@Success		200				{object}	interface{}				"Ok"
 //	@Failure		401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Orders/{id} [delete]
+//	@Router			/api/v1/orders/{id} [delete]
 func DeleteOrder(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -194,7 +194,7 @@ func DeleteOrder(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Orders/History [get]
+//	@Router			/api/v1/orders/History [get]
 func GetOrderHistory(c *fiber.Ctx) error {
 	// Get the current user from the authentication token
 	user, err := GetJWTUser(c)
