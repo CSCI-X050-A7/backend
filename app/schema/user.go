@@ -27,7 +27,7 @@ type UserDetail struct {
 	State         string    `json:"state"`
 	Zip           string    `json:"zip"`
 	NeedPromotion bool      `json:"need_promotion"`
-	Cards         []Card    `json:"cards" foreignKey:"UserID"`
+	Cards         []Card    `json:"cards" validate:"required,max=3"`
 }
 type UserDetailNoCards struct {
 	ID            uuid.UUID `json:"id"`
