@@ -124,7 +124,7 @@ func UpdateUserMe(c *fiber.Ctx) error {
 //
 //	@Description	get all orders history from the current user.
 //	@Summary		get all orders history
-//	@Tags			Order
+//	@Tags			User
 //	@Accept			json
 //	@Produce		json
 //	@Param			offset			query		integer	false	"offset"
@@ -137,9 +137,7 @@ func GetUserOrders(c *fiber.Ctx) error {
 	// Get the current user from the authentication token
 	user, err := GetJWTUser(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": err.Error(),
-		})
+		return err
 	}
 	pagination := GetPagination(c)
 	objs, count, err := ListObjs[schema.Order](

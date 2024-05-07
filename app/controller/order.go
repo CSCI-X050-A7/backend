@@ -52,6 +52,10 @@ func GetOrder(c *fiber.Ctx) error {
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/orders [post]
 func CreateOrder(c *fiber.Ctx) error {
+	user, err := GetJWTUser(c)
+	if err != nil {
+		return err
+	}
 	// Create new order struct
 	createOrder := &schema.UpsertOrder{}
 	if err := c.BodyParser(createOrder); err != nil {
@@ -89,11 +93,11 @@ func CreateOrder(c *fiber.Ctx) error {
 	db.Where("id = ?", createOrder.Card).First(&card)
 
 	newOrder := model.Order{
-		Show:         show,
-		Card:         card,
-		Seats:        createOrder.Seats,
-		Promotion:    promotion,
-		TicketsArray: tickets,
+		ShowID:      show.ID,
+		CardID:      card.ID,
+		UserID:      user.ID,
+		PromotionID: promotion.ID,
+		Tickets:     tickets,
 	}
 	if err := convert.Update(&newOrder, &createOrder); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -111,8 +115,8 @@ func CreateOrder(c *fiber.Ctx) error {
 
 // UpdateOrder func update a Order.
 //
-//	@Description	update Order
-//	@Summary		update a Order
+//	@Description	update order
+//	@Summary		update a order
 //	@Tags			Order
 //	@Accept			json
 //	@Produce		json
@@ -171,8 +175,8 @@ func UpdateOrder(c *fiber.Ctx) error {
 
 // DeleteOrder func delete a Order.
 //
-//	@Description	delete Order
-//	@Summary		delete a Order
+//	@Description	delete order
+//	@Summary		delete a order
 //	@Tags			Order
 //	@Accept			json
 //	@Produce		json

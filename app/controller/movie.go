@@ -255,7 +255,7 @@ func DeleteMovie(c *fiber.Ctx) error {
 //
 //	@Description	 shows of a movie.
 //	@Summary		get shows of a movie
-//	@Tags			Show
+//	@Tags			Movie
 //	@Accept			json
 //	@Produce		json
 //	@Param			id		path		string	true	"Movie ID"

@@ -19,5 +19,4 @@ type Ticket struct {
 	Title     string
 	Type      string
 	Price     float64
-	OrderID   uuid.UUID
 }

@@ -34,7 +34,6 @@ type UpsertMovie struct {
 	TrailerVideo   string    `json:"trailer_video" validate:"required,lte=1023"`
 	RatingCode     string    `json:"rating_code" validate:"required,lte=255"`
 	ShowTime       time.Time `json:"show_time" validate:"required"`
-	Show           []Show    `json:"show" validate:"required,lte=255"`
 }
 
 type MovieListResponse = ListResponse[Movie]
