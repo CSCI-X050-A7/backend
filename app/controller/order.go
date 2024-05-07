@@ -60,7 +60,7 @@ func CreateOrder(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
-	// Create a new validator for a Order model.
+
 	validate := validator.NewValidator()
 	if errs := validate.Struct(createOrder); errs != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -69,11 +69,13 @@ func CreateOrder(c *fiber.Ctx) error {
 	}
 
 	var promotion model.Promotion
-	result := db.Where("id = ?", createOrder.PromotionID).First(&promotion)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "Promotion not found",
-		})
+	if createOrder.PromotionID != uuid.Nil {
+		promotionResult := db.Where("id = ?", createOrder.PromotionID).First(&promotion)
+		if promotionResult.Error != nil && !errors.Is(promotionResult.Error, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"msg": promotionResult.Error.Error(),
+			})
+		}
 	}
 
 	ticketIDs := make([]uuid.UUID, len(createOrder.TicketsArray))
@@ -82,7 +84,7 @@ func CreateOrder(c *fiber.Ctx) error {
 	}
 
 	var tickets []model.Ticket
-	result = db.Model(&model.Ticket{}).Where("id IN ?", ticketIDs).Find(&tickets)
+	result := db.Model(&model.Ticket{}).Where("id IN ?", ticketIDs).Find(&tickets)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": "Tickets not found",
@@ -98,30 +100,35 @@ func CreateOrder(c *fiber.Ctx) error {
 	}
 
 	var card model.Card
-	result = db.Where("id = ?", createOrder.CardID).First(&card)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg": "Card not found",
-		})
+	if createOrder.CardID != uuid.Nil {
+		cardResult := db.Where("id = ?", createOrder.CardID).First(&card)
+		if cardResult.Error != nil && !errors.Is(cardResult.Error, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"msg": cardResult.Error.Error(),
+			})
+		}
 	}
 
 	newOrder := model.Order{
-		Show:         show,
-		Card:         card,
-		Seats:        createOrder.Seats,
-		Promotion:    promotion,
-		TicketsArray: tickets,
-	}
-
-	for _, ticket := range tickets {
-		ticket.OrderID = newOrder.ID
-		db.Create(&ticket)
+		Show:      show,
+		Card:      card,
+		Seats:     createOrder.Seats,
+		Promotion: promotion,
 	}
 
 	if err := db.Create(&newOrder).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
+	}
+
+	for _, ticket := range tickets {
+		ticket.OrderID = newOrder.ID
+		if err := db.Save(&ticket).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"msg": err.Error(),
+			})
+		}
 	}
 
 	return c.JSON(convert.To[schema.Order](newOrder))
