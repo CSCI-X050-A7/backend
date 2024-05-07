@@ -57,7 +57,7 @@ func GetMovies(c *fiber.Ctx) error {
 	}
 	if showTime != "" {
 		statement = statement.
-			Where("show_time LIKE ?", fmt.Sprintf("%%%s%%", showTime))
+			Where("show_time LIKE ?", fmt.Sprintf("%s%%", showTime))
 	}
 	objs, count, err := ListObjs[schema.Movie](
 		statement,
