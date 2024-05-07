@@ -17,7 +17,7 @@ import (
 //
 // @Description	Get all promotions.
 // @Summary		get all promotions
-// @Tags		Promotion
+// @Tags		Admin
 // @Accept		json
 // @Produce		json
 // @Param       search query    string  false "search by code"
@@ -25,7 +25,7 @@ import (
 // @Param 		limit  query    integer false "limit"
 // @Success		200	   {object}	schema.PromoListResponse
 // @Failure		400	   {object}	schema.ErrorResponse	"Error"
-// @Router		/api/v1/promotions [get]
+// @Router		/api/v1/admin/promotions [get]
 func GetPromos(c *fiber.Ctx) error {
 	pagination := GetPagination(c)
 	search := c.Query("search", "")
@@ -55,16 +55,15 @@ func GetPromos(c *fiber.Ctx) error {
 //
 // @Description	Create a new promotion.
 // @Summary		create a new promotion
-// @Tags		Promotion
+// @Tags		Admin
 // @Accept		json
 // @Produce		json
 // @Param       promotion body schema.UpsertPromotion true "Create new promo"
 // @Success		200	   {object}	schema.Promotion
 // @Failure		400	   {object}	schema.ErrorResponse	"Error"
-// @Router		/api/v1/promotions [post]
+// @Router		/api/v1/admin/promotions [post]
 // @Security    ApiKeyAuth
 func CreatePromo(c *fiber.Ctx) error {
-
 	createPromo := &schema.UpsertPromotion{}
 	if err := c.BodyParser(createPromo); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -95,8 +94,8 @@ func CreatePromo(c *fiber.Ctx) error {
 			err := email.Send(
 				u.Email,
 				"Don't miss out on our new promotional offer!",
-				fmt.Sprintf("Use promo code '%s' at checkout for a %.0f%% off discount!\nValid until %s.",
-					newPromo.Code, newPromo.Discount*100, newPromo.ExpiryDate),
+				fmt.Sprintf("Use promo code '%s' at checkout for a %.0f%% off discount!.",
+					newPromo.Code, newPromo.Discount*100),
 			)
 			if err != nil {
 				logrus.Errorf("email send error: %v", err)
@@ -110,7 +109,7 @@ func CreatePromo(c *fiber.Ctx) error {
 //
 //	@Description	update promo
 //	@Summary		update a promo
-//	@Tags			Promotion
+//	@Tags			Admin
 //	@Accept			json
 //	@Produce		json
 //	@Param			id					path		string			true	"Promo ID"
@@ -118,9 +117,8 @@ func CreatePromo(c *fiber.Ctx) error {
 //	@Success		200					{object}	schema.Promotion
 //	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/promotions/{id} [put]
+//	@Router			/api/v1/admin/promotions/{id} [put]
 func UpdatePromo(c *fiber.Ctx) error {
-
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
