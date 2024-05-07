@@ -9,7 +9,7 @@ import (
 
 // Show  struct to describe show object.
 type Show struct {
-	ID                uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
+	ID                uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())" validate:"required"`
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	DeletedAt         gorm.DeletedAt `gorm:"index"`

@@ -6,19 +6,20 @@ import (
 
 // Show struct to describe movie object.
 type Order struct {
-	ID           uuid.UUID `json:"id" validate:"required"`
-	TicketsArray string    `json:"tickets_array" validate:"required,lte=255"`
-	Promotion    string    `json:"promotion" validate:"required,lte=255"`
-	Show         Show      `json:"show" validate:"required,lte=255"`
-	Card         string    `json:"card" validate:"required,lte=255"`
+	ID          uuid.UUID `json:"id" validate:"required"`
+	Tickets     []Ticket  `json:"tickets" validate:"required"`
+	UserID      uuid.UUID `json:"user_id" validate:"required"`
+	PromotionID uuid.UUID `json:"promotion_id" validate:"required"`
+	ShowID      uuid.UUID `json:"show_id" validate:"required"`
+	CardID      uuid.UUID `json:"card_id" validate:"required"`
 }
 
-// Show struct to describe movie object.
 type UpsertOrder struct {
-	TicketsArray string `json:"tickets_array" validate:"required,lte=255"`
-	Promotion    string `json:"promotion" validate:"required,lte=255"`
-	Show         Show   `json:"show" validate:"required,lte=255"`
-	Card         string `json:"card" validate:"required,lte=255"`
+	Tickets     []Ticket  `json:"tickets" validate:"required"`
+	UserID      uuid.UUID `json:"user_id" validate:"required"`
+	PromotionID uuid.UUID `json:"promotion_id" validate:"required"`
+	ShowID      uuid.UUID `json:"show_id" validate:"required"`
+	CardID      uuid.UUID `json:"card_id" validate:"required"`
 }
 
 type OrderListResponse = ListResponse[Order]

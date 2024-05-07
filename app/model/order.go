@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Order struct to describe order object.
 type Order struct {
 	ID          uuid.UUID `gorm:"primarykey;type:uuid;default:(uuid_generate_v4())"`
 	CreatedAt   time.Time

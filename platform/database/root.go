@@ -35,7 +35,6 @@ func MigrateDatabase() error {
 	return DB.AutoMigrate(
 		&model.Movie{},
 		&model.User{},
-		&model.Booking{},
 		&model.Card{},
 		&model.Promotion{},
 		&model.Ticket{},

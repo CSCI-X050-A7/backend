@@ -15,5 +15,4 @@ type UpsertPromotion struct {
 	Discount float64 `json:"discount" validate:"required"`
 	Code     string  `json:"code" validate:"required,lte=255"`
 }
-
 type PromoListResponse = ListResponse[Promotion]

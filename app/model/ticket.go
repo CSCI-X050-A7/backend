@@ -14,9 +14,8 @@ type Ticket struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 	Seat      string
-	Show      string
-	Title     string
+	OrderID   uuid.UUID
+	ShowID    uuid.UUID
 	Type      string
 	Price     float64
-	OrderID   uuid.UUID
 }

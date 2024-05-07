@@ -52,6 +52,10 @@ func GetOrder(c *fiber.Ctx) error {
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/orders [post]
 func CreateOrder(c *fiber.Ctx) error {
+	user, err := GetJWTUser(c)
+	if err != nil {
+		return err
+	}
 	// Create new order struct
 	createOrder := &schema.UpsertOrder{}
 	if err := c.BodyParser(createOrder); err != nil {
@@ -72,7 +76,30 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	newOrder := model.Order{}
+	// TODO: create a reasonalbe order
+	// Look up the promotion in the database
+	var promotion model.Promotion
+	db.Where("code = ?", createOrder.PromotionID).First(&promotion)
+
+	// Look up the tickets in the database
+	var tickets []model.Ticket
+	// db.Where("id IN ?", createOrder.TicketsArray).Find(&tickets)
+
+	// Look up the show in the database
+	var show model.Show
+	db.Where("id = ?", createOrder.ShowID).First(&show)
+
+	// Look up the card in the database
+	var card model.Card
+	db.Where("id = ?", createOrder.CardID).First(&card)
+
+	newOrder := model.Order{
+		ShowID:      show.ID,
+		CardID:      card.ID,
+		UserID:      user.ID,
+		PromotionID: promotion.ID,
+		Tickets:     tickets,
+	}
 	if err := convert.Update(&newOrder, &createOrder); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
@@ -89,8 +116,8 @@ func CreateOrder(c *fiber.Ctx) error {
 
 // UpdateOrder func update a Order.
 //
-//	@Description	update Order
-//	@Summary		update a Order
+//	@Description	update order
+//	@Summary		update a order
 //	@Tags			Order
 //	@Accept			json
 //	@Produce		json
@@ -149,8 +176,8 @@ func UpdateOrder(c *fiber.Ctx) error {
 
 // DeleteOrder func delete a Order.
 //
-//	@Description	delete Order
-//	@Summary		delete a Order
+//	@Description	delete order
+//	@Summary		delete a order
 //	@Tags			Order
 //	@Accept			json
 //	@Produce		json

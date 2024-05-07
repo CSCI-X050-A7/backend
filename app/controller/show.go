@@ -89,8 +89,8 @@ func CreateShow(c *fiber.Ctx) error {
 
 // UpdateShow func update a Show.
 //
-//	@Description	update Show
-//	@Summary		update a Show
+//	@Description	update show
+//	@Summary		update a show
 //	@Tags			Show
 //	@Accept			json
 //	@Produce		json
@@ -149,8 +149,8 @@ func UpdateShow(c *fiber.Ctx) error {
 
 // DeleteShow func delete a Show.
 //
-//	@Description	delete Show
-//	@Summary		delete a Show
+//	@Description	delete show
+//	@Summary		delete a show
 //	@Tags			Show
 //	@Accept			json
 //	@Produce		json
