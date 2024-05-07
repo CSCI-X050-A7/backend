@@ -1,12 +1,15 @@
 package schema
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
 // Show struct to describe movie object.
 type Order struct {
 	ID              uuid.UUID `json:"id" validate:"required"`
+	CreatedAt       time.Time `json:"created_at" validate:"required"`
 	Tickets         []Ticket  `json:"tickets" validate:"required"`
 	UserID          uuid.UUID `json:"user_id" validate:"required"`
 	PromotionID     uuid.UUID `json:"promotion_id" validate:"required"`
