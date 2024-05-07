@@ -7,10 +7,9 @@ import (
 )
 
 func PromoRoutes(a *fiber.App) {
-	route := a.Group("/api/v1/promotions")
-	route.Get("/", controller.GetPromos)
+	route := a.Group("/api/v1/admin/promotions")
 	routeProtectedAdmin := route.Group("", middleware.JWTProtected(), middleware.IsAdmin)
+	routeProtectedAdmin.Get("/", controller.GetPromos)
 	routeProtectedAdmin.Post("/", controller.CreatePromo)
 	routeProtectedAdmin.Put("/:id", controller.UpdatePromo)
-	// routeProtectedAdmin.Delete("/:id", controller.DeletePromo)
 }
