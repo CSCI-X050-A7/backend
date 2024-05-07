@@ -8,7 +8,6 @@ import (
 
 type Show struct {
 	ID                uuid.UUID `json:"id" validate:"required"`
-	Movie             Movie     `json:"movie" validate:"required,lte=255"`
 	StartTime         time.Time `json:"start_time" validate:"required,lte=255"`
 	EndTime           time.Time `json:"end_time" validate:"required,lte=255"`
 	BookingFee        float32   `json:"booking_fee" validate:"required,lte=255"`
@@ -19,7 +18,6 @@ type Show struct {
 	TheaterLocation   string    `json:"theater_location" validate:"required,lte=1023"`
 }
 type UpsertShow struct {
-	Movie             Movie     `json:"movie" validate:"required,lte=255"`
 	StartTime         time.Time `json:"start_time" validate:"required,lte=255"`
 	EndTime           time.Time `json:"end_time" validate:"required,lte=255"`
 	BookingFee        float32   `json:"booking_fee" validate:"required,lte=255"`

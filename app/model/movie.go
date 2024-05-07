@@ -24,4 +24,5 @@ type Movie struct {
 	TrailerVideo   string
 	RatingCode     string
 	ShowTime       time.Time
+	Show           []Show `gorm:"foreignKey:MovieID"`
 }
