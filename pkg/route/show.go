@@ -9,7 +9,7 @@ import (
 func ShowRoutes(a *fiber.App) {
 	route := a.Group("/api/v1/shows")
 	route.Get("/:id", controller.GetShow)
-	route.Post("/:id", controller.CreateShow)
+	route.Post("/", controller.CreateShow)
 	route.Put("/:id", controller.UpdateShow)
 	route.Delete("/:id", controller.DeleteShow)
 }

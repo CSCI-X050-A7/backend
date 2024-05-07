@@ -21,7 +21,7 @@ import (
 //	@Param			id		path		string	true	"Show ID"
 //	@Success		200		{object}	schema.Show
 //	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
-//	@Router			/api/v1/Shows/{id} [get]
+//	@Router			/api/v1/shows/{id} [get]
 func GetShow(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -50,7 +50,7 @@ func GetShow(c *fiber.Ctx) error {
 //	@Failure		400,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200			{object}	schema.Show			"Ok"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Shows [post]
+//	@Router			/api/v1/shows [post]
 func CreateShow(c *fiber.Ctx) error {
 	// Create new Show struct
 	createShow := &schema.UpsertShow{}
@@ -99,7 +99,7 @@ func CreateShow(c *fiber.Ctx) error {
 //	@Success		200					{object}	schema.Show
 //	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Shows/{id} [put]
+//	@Router			/api/v1/shows/{id} [put]
 func UpdateShow(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -158,7 +158,7 @@ func UpdateShow(c *fiber.Ctx) error {
 //	@Success		200				{object}	interface{}				"Ok"
 //	@Failure		401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Shows/{id} [delete]
+//	@Router			/api/v1/shows/{id} [delete]
 func DeleteShow(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
