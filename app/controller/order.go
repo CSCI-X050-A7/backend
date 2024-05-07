@@ -1,9 +1,12 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
+	"github.com/CSCI-X050-A7/backend/pkg/email"
 	"github.com/CSCI-X050-A7/backend/pkg/validator"
 	"github.com/sirupsen/logrus"
 
@@ -262,6 +265,17 @@ func CheckoutOrder(c *fiber.Ctx) error {
 			"msg": err.Error(),
 		})
 	}
+	go func() {
+		err := email.Send(
+			user.Email,
+			"Cinema E-Booking System Checkout Confirmation",
+			fmt.Sprintf("You have checkout a order with ID %s, movie title %s, total price %f",
+				order.ID, order.MovieTitle, order.TotalPrice),
+		)
+		if err != nil {
+			logrus.Errorf("email send error: %v", err)
+		}
+	}()
 
 	err = db.Preload("Tickets").Where(&model.Order{ID: order.ID}).
 		First(&order).Error
