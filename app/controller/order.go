@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"errors"
+
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
 	"github.com/CSCI-X050-A7/backend/pkg/validator"
-	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -52,41 +54,56 @@ func GetOrder(c *fiber.Ctx) error {
 //	@Security		ApiKeyAuth
 //	@Router			/api/v1/orders [post]
 func CreateOrder(c *fiber.Ctx) error {
-	// Create new order struct
-	createOrder := &schema.UpsertOrder{}
-	if err := c.BodyParser(createOrder); err != nil {
-		// Return 400 and error message.
+	var createOrder schema.UpsertOrder
+	if err := c.BodyParser(&createOrder); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"msg": err.Error(),
 		})
 	}
-	logrus.Infof("create order: %+v", createOrder)
-
 	// Create a new validator for a Order model.
 	validate := validator.NewValidator()
-	if err := validate.Struct(createOrder); err != nil {
-		// Return, if some fields are not valid.
+	if errs := validate.Struct(createOrder); errs != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"msg":    "invalid input found",
-			"errors": validator.ValidatorErrors(err),
+			"msg": errs,
 		})
 	}
 
-	// Look up the promotion in the database
 	var promotion model.Promotion
-	db.Where("code = ?", createOrder.Promotion).First(&promotion)
+	result := db.Where("id = ?", createOrder.PromotionID).First(&promotion)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "Promotion not found",
+		})
+	}
 
-	// Look up the tickets in the database
+	ticketIDs := make([]uuid.UUID, len(createOrder.TicketsArray))
+	for i, ticket := range createOrder.TicketsArray {
+		ticketIDs[i] = ticket.ID
+	}
+
 	var tickets []model.Ticket
-	db.Where("id IN ?", createOrder.TicketsArray).Find(&tickets)
+	result = db.Model(&model.Ticket{}).Where("id IN ?", ticketIDs).Find(&tickets)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "Tickets not found",
+		})
+	}
 
-	// Look up the show in the database
 	var show model.Show
-	db.Where("id = ?", createOrder.Show).First(&show)
+	result = db.Where("id = ?", createOrder.ShowID).First(&show)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "Show not found",
+		})
+	}
 
-	// Look up the card in the database
 	var card model.Card
-	db.Where("id = ?", createOrder.Card).First(&card)
+	result = db.Where("id = ?", createOrder.CardID).First(&card)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": "Card not found",
+		})
+	}
 
 	newOrder := model.Order{
 		Show:         show,
@@ -95,11 +112,12 @@ func CreateOrder(c *fiber.Ctx) error {
 		Promotion:    promotion,
 		TicketsArray: tickets,
 	}
-	if err := convert.Update(&newOrder, &createOrder); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"msg": err.Error(),
-		})
+
+	for _, ticket := range tickets {
+		ticket.OrderID = newOrder.ID
+		db.Create(&ticket)
 	}
+
 	if err := db.Create(&newOrder).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"msg": err.Error(),
