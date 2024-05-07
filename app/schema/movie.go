@@ -16,8 +16,8 @@ type Movie struct {
 	Producer       string    `json:"producer" validate:"required,lte=255"`
 	Synopsis       string    `json:"synopsis" validate:"required,lte=255"`
 	Reviews        string    `json:"reviews" validate:"required,lte=255"`
-	TrailerPicture string    `json:"trailer_picture" validate:"required`
-	TrailerVideo   string    `json:"trailer_video" validate:"required`
+	TrailerPicture string    `json:"trailer_picture" validate:"required"`
+	TrailerVideo   string    `json:"trailer_video" validate:"required"`
 	RatingCode     string    `json:"rating_code" validate:"required,lte=255"`
 	ShowTime       time.Time `json:"show_time" validate:"required"`
 }
@@ -30,8 +30,8 @@ type UpsertMovie struct {
 	Producer       string    `json:"producer" validate:"required,lte=255"`
 	Synopsis       string    `json:"synopsis" validate:"required`
 	Reviews        string    `json:"reviews" validate:"required`
-	TrailerPicture string    `json:"trailer_picture" validate:"required`
-	TrailerVideo   string    `json:"trailer_video" validate:"required`
+	TrailerPicture string    `json:"trailer_picture" validate:"required"`
+	TrailerVideo   string    `json:"trailer_video" validate:"required"`
 	RatingCode     string    `json:"rating_code" validate:"required,lte=255"`
 	ShowTime       time.Time `json:"show_time" validate:"required"`
 }
