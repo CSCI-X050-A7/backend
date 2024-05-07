@@ -76,21 +76,22 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
+	// TODO: create a reasonalbe order
 	// Look up the promotion in the database
 	var promotion model.Promotion
-	db.Where("code = ?", createOrder.Promotion).First(&promotion)
+	db.Where("code = ?", createOrder.PromotionID).First(&promotion)
 
 	// Look up the tickets in the database
 	var tickets []model.Ticket
-	db.Where("id IN ?", createOrder.TicketsArray).Find(&tickets)
+	// db.Where("id IN ?", createOrder.TicketsArray).Find(&tickets)
 
 	// Look up the show in the database
 	var show model.Show
-	db.Where("id = ?", createOrder.Show).First(&show)
+	db.Where("id = ?", createOrder.ShowID).First(&show)
 
 	// Look up the card in the database
 	var card model.Card
-	db.Where("id = ?", createOrder.Card).First(&card)
+	db.Where("id = ?", createOrder.CardID).First(&card)
 
 	newOrder := model.Order{
 		ShowID:      show.ID,
