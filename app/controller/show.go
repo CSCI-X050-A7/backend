@@ -185,3 +185,26 @@ func DeleteShow(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{})
 }
+
+// GetShowsByMovieID func gets all shows with the same movieID.
+//
+//	@Description	get shows by movieID.
+//	@Summary		get shows by movieID
+//	@Tags			Show
+//	@Accept			json
+//	@Produce		json
+//	@Param			movieID		path		string	true	"Movie ID"
+//	@Success		200		{object}	[]schema.Show
+//	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
+//	@Router			/api/v1/Shows/{movieID} [get]
+func GetShowsByMovieID(c *fiber.Ctx) error {
+	movieID := c.Params("movieID")
+	shows := []model.Show{}
+	err := db.Where("movie_id = ?", movieID).Find(&shows).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"msg": "Shows not found",
+		})
+	}
+	return c.JSON(convert.To[schema.Show](shows))
+}
