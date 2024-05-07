@@ -56,8 +56,19 @@ func GetMovies(c *fiber.Ctx) error {
 			Where("category = ?", category)
 	}
 	if showTime != "" {
-		statement = statement.
-			Where("show_time LIKE ?", fmt.Sprintf("%s%%", showTime))
+		var shows []model.Show
+		processed := make(map[uuid.UUID]bool)
+		var movieIDs []uuid.UUID
+		db.Model(&model.Show{}).Where("end_time LIKE ?", fmt.Sprintf("%s%%", showTime)).Find(&shows)
+		for _, show := range shows {
+			if show.ID != uuid.Nil && !processed[show.MovieID] {
+				movieIDs = append(movieIDs, show.MovieID)
+				processed[show.MovieID] = true
+			}
+		}
+		if len(movieIDs) > 0 {
+			statement = statement.Where("id IN ?", movieIDs)
+		}
 	}
 	objs, count, err := ListObjs[schema.Movie](
 		statement,
