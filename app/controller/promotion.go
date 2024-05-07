@@ -7,6 +7,7 @@ import (
 	"github.com/CSCI-X050-A7/backend/app/schema"
 	"github.com/CSCI-X050-A7/backend/pkg/convert"
 	"github.com/CSCI-X050-A7/backend/pkg/email"
+	"github.com/CSCI-X050-A7/backend/pkg/validator"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
@@ -140,7 +141,13 @@ func UpdatePromo(c *fiber.Ctx) error {
 		})
 	}
 
-	// TODO: validator
+	validate := validator.NewValidator()
+	if err := validate.Struct(updatePromo); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg":    "invalid input found",
+			"errors": validator.ValidatorErrors(err),
+		})
+	}
 
 	if err := convert.Update(&promotion, &updatePromo); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
