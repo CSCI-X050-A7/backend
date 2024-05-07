@@ -3,6 +3,7 @@ package controller
 import (
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/CSCI-X050-A7/backend/app/model"
 	"github.com/CSCI-X050-A7/backend/app/schema"
@@ -18,8 +19,18 @@ import (
 
 var db *gorm.DB
 
-func NewDB(newDB *gorm.DB) {
-	db = newDB
+var lock = &sync.Mutex{}
+
+// singleton pattern
+func GetDBInstance(newDB *gorm.DB) *gorm.DB {
+	if db == nil {
+		lock.Lock()
+		defer lock.Unlock()
+		if db == nil {
+			db = newDB
+		}
+	}
+	return db
 }
 
 func ListObjs[Schema any](

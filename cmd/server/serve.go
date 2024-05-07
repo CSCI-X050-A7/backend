@@ -21,7 +21,7 @@ func Serve() {
 	// connect to DB
 	logrus.Infoln("Staring server...")
 	database.ConnectSqlite()
-	controller.NewDB(database.DB)
+	controller.GetDBInstance(database.DB)
 
 	app := fiber.New()
 
