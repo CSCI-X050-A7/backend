@@ -11,6 +11,7 @@ func MovieRoutes(a *fiber.App) {
 	route := a.Group("/api/v1/movies")
 	route.Get("/", controller.GetMovies)
 	route.Get("/:id", controller.GetMovie)
+	route.Get("/:id/shows", controller.GetMovieShows)
 	routeProtectedAdmin := route.Group("", middleware.JWTProtected(), middleware.IsAdmin)
 	routeProtectedAdmin.Post("/", controller.CreateMovie)
 	routeProtectedAdmin.Put("/:id", controller.UpdateMovie)

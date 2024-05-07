@@ -21,7 +21,7 @@ import (
 //	@Param			id		path		string	true	"Show ID"
 //	@Success		200		{object}	schema.Show
 //	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
-//	@Router			/api/v1/Shows/{id} [get]
+//	@Router			/api/v1/shows/{id} [get]
 func GetShow(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -50,7 +50,7 @@ func GetShow(c *fiber.Ctx) error {
 //	@Failure		400,401,500	{object}	schema.ErrorResponse	"Error"
 //	@Success		200			{object}	schema.Show			"Ok"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Shows [post]
+//	@Router			/api/v1/shows [post]
 func CreateShow(c *fiber.Ctx) error {
 	// Create new Show struct
 	createShow := &schema.UpsertShow{}
@@ -99,7 +99,7 @@ func CreateShow(c *fiber.Ctx) error {
 //	@Success		200					{object}	schema.Show
 //	@Failure		400,401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Shows/{id} [put]
+//	@Router			/api/v1/shows/{id} [put]
 func UpdateShow(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -158,7 +158,7 @@ func UpdateShow(c *fiber.Ctx) error {
 //	@Success		200				{object}	interface{}				"Ok"
 //	@Failure		401,403,404,500	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/Shows/{id} [delete]
+//	@Router			/api/v1/shows/{id} [delete]
 func DeleteShow(c *fiber.Ctx) error {
 	ID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
@@ -184,27 +184,4 @@ func DeleteShow(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{})
-}
-
-// GetShowsByMovieID func gets all shows with the same movieID.
-//
-//	@Description	get shows by movieID.
-//	@Summary		get shows by movieID
-//	@Tags			Show
-//	@Accept			json
-//	@Produce		json
-//	@Param			movieID		path		string	true	"Movie ID"
-//	@Success		200		{object}	[]schema.Show
-//	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
-//	@Router			/api/v1/Shows/{movieID} [get]
-func GetShowsByMovieID(c *fiber.Ctx) error {
-	movieID := c.Params("movieID")
-	shows := []model.Show{}
-	err := db.Where("movie_id = ?", movieID).Find(&shows).Error
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"msg": "Shows not found",
-		})
-	}
-	return c.JSON(convert.To[schema.Show](shows))
 }

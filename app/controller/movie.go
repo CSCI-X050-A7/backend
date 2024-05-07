@@ -250,3 +250,34 @@ func DeleteMovie(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{})
 }
+
+// GetMovieShows func gets all shows of a movie.
+//
+//	@Description	 shows of a movie.
+//	@Summary		get shows of a movie
+//	@Tags			Show
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"Movie ID"
+//	@Success		200		{object}	schema.ShowListResponse
+//	@Failure		400,404	{object}	schema.ErrorResponse	"Error"
+//	@Router			/api/v1/movies/{id}/shows [get]
+func GetMovieShows(c *fiber.Ctx) error {
+	pagination := GetPagination(c)
+	statement := db.Model(model.Show{}).Where("movie_id = ?", c.Params("id"))
+	objs, count, err := ListObjs[schema.Show](
+		statement,
+		pagination,
+	)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	return c.JSON(fiber.Map{
+		"offset": pagination.Offset,
+		"limit":  pagination.Limit,
+		"count":  count,
+		"data":   objs,
+	})
+}

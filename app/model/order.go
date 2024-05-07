@@ -13,6 +13,7 @@ type Order struct {
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
 	Tickets     []Ticket
+	UserID      uuid.UUID
 	PromotionID uuid.UUID
 	ShowID      uuid.UUID
 	CardID      uuid.UUID

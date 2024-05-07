@@ -120,23 +120,40 @@ func UpdateUserMe(c *fiber.Ctx) error {
 	return c.JSON(convert.To[schema.UserDetail](user))
 }
 
-// GetOrders func get user's history orders.
+// GetUserOrders func gets the list of all orders history from the current user.
 //
-//	@Description	a user's orders.
-//	@Summary		get a user's orders
-//	@Tags			User
+//	@Description	get all orders history from the current user.
+//	@Summary		get all orders history
+//	@Tags			Order
 //	@Accept			json
 //	@Produce		json
+//	@Param			offset			query		integer	false	"offset"
+//	@Param			limit			query		integer	false	"limit"
 //	@Success		200				{object}	schema.OrderListResponse
 //	@Failure		400,401,403,404	{object}	schema.ErrorResponse	"Error"
 //	@Security		ApiKeyAuth
-//	@Router			/api/v1/users/orders [get]
-func GetOrders(c *fiber.Ctx) error {
+//	@Router			/api/v1/users/me/orders [get]
+func GetUserOrders(c *fiber.Ctx) error {
+	// Get the current user from the authentication token
 	user, err := GetJWTUser(c)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
 	}
-	logrus.Debugf("user: %v", user) // TODO: remove me
-	// TODO: get orders
-	return c.JSON(fiber.Map{})
+	pagination := GetPagination(c)
+	objs, count, err := ListObjs[schema.Order](
+		db.Model(model.Order{UserID: user.ID}), pagination,
+	)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg": err.Error(),
+		})
+	}
+	return c.JSON(fiber.Map{
+		"offset": pagination.Offset,
+		"limit":  pagination.Limit,
+		"count":  count,
+		"data":   objs,
+	})
 }
